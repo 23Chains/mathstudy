@@ -1,17 +1,15 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const GEMINI_KEY = process.env.GEMINI_API_KEY;
   if (!GEMINI_KEY) {
-    return res.status(500).json({ error: 'GEMINI_API_KEY não configurada' });
+    return res.status(500).json({ error: 'GEMINI_API_KEY nao configurada' });
   }
 
   try {
     const { messages, max_tokens } = req.body;
-
-    // Pega a última mensagem do utilizador
     const userMessage = messages?.[messages.length - 1]?.content || '';
 
     const geminiRes = await fetch(
@@ -37,8 +35,6 @@ export default async function handler(req, res) {
 
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
-    // Responde no mesmo formato que a Anthropic API
-    // para que o index.html não precise de alterações
     return res.status(200).json({
       content: [{ type: 'text', text }],
     });
