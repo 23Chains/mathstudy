@@ -3,37 +3,36 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const GEMINI_KEY = process.env.GEMINI_API_KEY;
-  if (!GEMINI_KEY) {
-    return res.status(500).json({ error: 'GEMINI_API_KEY nao configurada' });
+  const GROQ_KEY = process.env.GROQ_API_KEY;
+  if (!GROQ_KEY) {
+    return res.status(500).json({ error: 'GROQ_API_KEY nao configurada' });
   }
 
   try {
     const { messages, max_tokens } = req.body;
     const userMessage = messages?.[messages.length - 1]?.content || '';
 
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: userMessage }] }],
-          generationConfig: {
-            maxOutputTokens: max_tokens || 1000,
-            temperature: 0.7,
-          },
-        }),
-      }
-    );
+    const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${GROQ_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{ role: 'user', content: userMessage }],
+        max_tokens: max_tokens || 1000,
+        temperature: 0.7
+      })
+    });
 
-    const data = await geminiRes.json();
+    const data = await groqRes.json();
 
-    if (!geminiRes.ok) {
-      return res.status(geminiRes.status).json({ error: data.error?.message || 'Erro Gemini' });
+    if (!groqRes.ok) {
+      return res.status(groqRes.status).json({ error: data.error?.message || 'Erro Groq' });
     }
 
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const text = data.choices?.[0]?.message?.content || '';
 
     return res.status(200).json({
       content: [{ type: 'text', text }],
