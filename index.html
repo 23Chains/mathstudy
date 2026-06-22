@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathStudy — Trigonometria & Geometria</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0D1117;
+    --surface: #161B22;
+    --surface2: #1C2230;
+    --border: #2A3140;
+    --purple: #7C3AED;
+    --purple-light: #A78BFA;
+    --amber: #F59E0B;
+    --amber-light: #FCD34D;
+    --green: #10B981;
+    --red: #EF4444;
+    --text: #E6EDF3;
+    --muted: #7D8590;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Dot grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, #2A3140 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 240px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 10;
+  }
+
+  .logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo h1 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--purple-light), var(--amber));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+  }
+  .logo span {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .nav {
+    padding: 16px 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .nav-section {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 12px 8px 6px;
+  }
+
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+    width: 100%;
+  }
+  .nav-btn:hover { background: var(--surface2); color: var(--text); }
+  .nav-btn.active {
+    background: rgba(124, 58, 237, 0.15);
+    color: var(--purple-light);
+    border: 1px solid rgba(124, 58, 237, 0.3);
+  }
+  .nav-btn .icon { font-size: 16px; }
+
+  .score-badge {
+    margin: 12px;
+    padding: 14px;
+    background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(245,158,11,0.1));
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .score-badge .label { font-size: 11px; color: var(--muted); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 1px; }
+  .score-badge .value {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--amber);
+    line-height: 1.2;
+  }
+  .score-badge .sub { font-size: 12px; color: var(--muted); }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: 240px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(13,17,23,0.8);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .topbar h2 { font-family: var(--font-display); font-size: 18px; font-weight: 600; }
+  .topbar .pills { display: flex; gap: 8px; }
+  .pill {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .pill.active { background: var(--purple); border-color: var(--purple); color: #fff; }
+
+  .content { padding: 32px; flex: 1; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .card-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .card-icon.purple { background: rgba(124,58,237,0.2); }
+  .card-icon.amber { background: rgba(245,158,11,0.2); }
+  .card-icon.green { background: rgba(16,185,129,0.2); }
+  .card-title { font-family: var(--font-display); font-size: 16px; font-weight: 600; }
+  .card-sub { font-size: 12px; color: var(--muted); }
+  .card-body { padding: 24px; }
+
+  /* ── SECTION TABS ── */
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--surface); border-radius: 10px; padding: 4px; }
+  .tab-btn {
+    flex: 1; padding: 8px 16px; border: none; background: transparent;
+    color: var(--muted); font-family: var(--font-body); font-size: 13px;
+    border-radius: 7px; cursor: pointer; transition: all 0.15s; font-weight: 500;
+  }
+  .tab-btn.active { background: var(--surface2); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+
+  /* ── TEACH MODE ── */
+  .topic-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+  .topic-card {
+    padding: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .topic-card:hover { border-color: var(--purple); background: rgba(124,58,237,0.05); }
+  .topic-card.selected { border-color: var(--purple); background: rgba(124,58,237,0.1); }
+  .topic-card .t-icon { font-size: 22px; margin-bottom: 8px; }
+  .topic-card .t-name { font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--text); }
+  .topic-card .t-desc { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+
+  .explain-area {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    min-height: 200px;
+  }
+  .explain-area .prompt-hint {
+    color: var(--muted);
+    font-size: 14px;
+    text-align: center;
+    padding: 40px 0;
+  }
+
+  .ai-response {
+    line-height: 1.8;
+    font-size: 15px;
+    color: var(--text);
+  }
+
+  /* Section headers like Copilot */
+  .ai-response .section-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 24px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ai-response .section-title:first-child { margin-top: 0; }
+
+  /* Intro paragraph */
+  .ai-response p { margin-bottom: 14px; line-height: 1.75; }
+
+  /* Formula list — bullet style like Copilot */
+  .ai-response .formula-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .ai-response .formula-list li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 15px;
+  }
+  .ai-response .formula-list li .fl-label {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--text);
+    min-width: 90px;
+    font-size: 14px;
+  }
+  .ai-response .formula-list li .fl-eq {
+    color: var(--amber-light);
+    font-size: 16px;
+    flex: 1;
+  }
+  .ai-response .formula-list li .fl-eq .katex { color: var(--amber-light); }
+
+  /* Practical example box */
+  .ai-response .example-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 12px 0 16px;
+  }
+  .ai-response .example-box .ex-intro {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .ai-response .example-box .ex-data {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .ai-response .example-box .ex-data li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .ai-response .example-box .ex-data li::before {
+    content: '•';
+    color: var(--purple-light);
+    font-size: 16px;
+  }
+  .ai-response .example-box .ex-calcs {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .ai-response .example-box .ex-calc-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    color: var(--text);
+    padding: 6px 0;
+  }
+  .ai-response .example-box .ex-calc-row .katex { font-size: 17px; }
+
+  /* Inline formula block */
+  .ai-response .formula {
+    background: rgba(124,58,237,0.08);
+    border: 1px solid rgba(124,58,237,0.25);
+    border-left: 3px solid var(--purple);
+    padding: 14px 18px;
+    border-radius: 0 10px 10px 0;
+    font-size: 16px;
+    color: var(--amber-light);
+    margin: 12px 0;
+    text-align: center;
+  }
+  .ai-response .formula .katex { color: var(--amber-light); font-size: 17px; }
+
+  /* Bullet lists */
+  .ai-response ul { padding-left: 22px; margin-bottom: 14px; }
+  .ai-response li { margin-bottom: 7px; line-height: 1.65; }
+
+  /* Tip box */
+  .ai-response .tip {
+    background: rgba(16,185,129,0.07);
+    border: 1px solid rgba(16,185,129,0.2);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 14px;
+    color: #6EE7B7;
+    margin-top: 16px;
+    line-height: 1.6;
+  }
+
+  /* KaTeX global override for dark theme */
+  .katex { color: inherit; }
+  .katex-display { margin: 0; }
+
+  .ask-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .ask-input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .ask-input:focus { border-color: var(--purple); }
+  .ask-input::placeholder { color: var(--muted); }
+
+  .btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary { background: var(--purple); color: #fff; }
+  .btn-primary:hover { background: #6D28D9; }
+  .btn-primary:disabled { background: #3B2F5C; color: #7D5BBD; cursor: not-allowed; }
+  .btn-amber { background: var(--amber); color: #000; font-weight: 600; }
+  .btn-amber:hover { background: #D97706; }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .btn-outline:hover { border-color: var(--purple-light); color: var(--purple-light); }
+
+  /* ── FLASHCARD MODE ── */
+  .flashcard-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+  .flashcard {
+    width: 100%;
+    max-width: 560px;
+    min-height: 220px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    text-align: center;
+  }
+  .flashcard:hover { border-color: var(--purple); box-shadow: 0 0 0 4px rgba(124,58,237,0.08); }
+  .flashcard .fc-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .flashcard .fc-question {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .flashcard .fc-answer {
+    display: none;
+    font-family: var(--font-mono);
+    font-size: 22px;
+    color: var(--amber-light);
+    font-weight: 500;
+  }
+  .flashcard .fc-hint { font-size: 12px; color: var(--muted); margin-top: 16px; }
+  .flashcard.flipped .fc-question { display: none; }
+  .flashcard.flipped .fc-answer { display: block; }
+  .flashcard.flipped { border-color: var(--amber); background: rgba(245,158,11,0.05); }
+
+  .fc-controls { display: flex; gap: 12px; }
+  .fc-progress {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+  }
+  .progress-bar {
+    width: 100%;
+    max-width: 560px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--purple), var(--amber));
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+
+  /* ── QUIZ MODE ── */
+  .quiz-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .quiz-meta {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .meta-item {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .meta-item span { color: var(--text); font-weight: 500; }
+
+  .quiz-question {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .q-number {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .q-text {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  .q-formula {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--amber-light);
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: inline-block;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn {
+    padding: 14px 18px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--purple-light); background: rgba(124,58,237,0.05); }
+  .option-btn.correct { border-color: var(--green); background: rgba(16,185,129,0.1); color: #6EE7B7; }
+  .option-btn.wrong { border-color: var(--red); background: rgba(239,68,68,0.1); color: #FCA5A5; }
+  .option-btn:disabled { cursor: not-allowed; }
+  .option-letter {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .option-btn.correct .option-letter { background: var(--green); color: #000; }
+  .option-btn.wrong .option-letter { background: var(--red); color: #fff; }
+
+  .feedback-box {
+    margin-top: 16px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.6;
+    display: none;
+  }
+  .feedback-box.show { display: block; }
+  .feedback-box.correct { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); color: #6EE7B7; }
+  .feedback-box.wrong { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: #FCA5A5; }
+
+  .quiz-nav { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+
+  /* ── RESULTS ── */
+  .results-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 40px 0;
+  }
+  .results-score-ring {
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: conic-gradient(var(--purple) 0%, var(--amber) 60%, var(--border) 60%);
+    position: relative;
+  }
+  .results-score-ring::before {
+    content: '';
+    position: absolute;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: var(--bg);
+  }
+  .results-score-ring .ring-text {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+  .ring-score { font-family: var(--font-display); font-size: 36px; font-weight: 700; color: var(--amber); }
+  .ring-label { font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
+
+  .results-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; width: 100%; max-width: 480px; }
+  .result-stat {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .result-stat .rs-val { font-family: var(--font-display); font-size: 24px; font-weight: 700; }
+  .result-stat .rs-label { font-size: 11px; color: var(--muted); font-family: var(--font-mono); margin-top: 4px; }
+  .rs-correct .rs-val { color: var(--green); }
+  .rs-wrong .rs-val { color: var(--red); }
+  .rs-pts .rs-val { color: var(--amber); }
+
+  /* ── LOADING ── */
+  .loader {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 20px;
+    justify-content: center;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--purple); animation: bounce 1.2s infinite; }
+  .dot:nth-child(2) { animation-delay: 0.2s; background: var(--purple-light); }
+  .dot:nth-child(3) { animation-delay: 0.4s; background: var(--amber); }
+  @keyframes bounce { 0%,80%,100%{ transform:scale(0); } 40%{ transform:scale(1); } }
+
+  /* ── FLOATING FORMULAS ── */
+  .float-formulas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+  .float-f {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: rgba(124,58,237,0.08);
+    white-space: nowrap;
+    animation: float linear infinite;
+    user-select: none;
+  }
+  @keyframes float {
+    0% { transform: translateY(100vh) rotate(-10deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px) rotate(-10deg); opacity: 0; }
+  }
+
+  /* ── TOPIC BADGE ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+  }
+  .badge-trig { background: rgba(124,58,237,0.15); color: var(--purple-light); border: 1px solid rgba(124,58,237,0.3); }
+  .badge-geo { background: rgba(245,158,11,0.15); color: var(--amber-light); border: 1px solid rgba(245,158,11,0.3); }
+
+  .hidden { display: none !important; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-240px); }
+    .main { margin-left: 0; }
+    .topic-list { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="float-formulas" id="floatFormulas"></div>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <h1>MathStudy</h1>
+      <span>Exame de Matemática</span>
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Modo</div>
+      <button class="nav-btn active" onclick="setMode('teach')" id="nav-teach">
+        <span class="icon">📖</span> Aprender
+      </button>
+      <button class="nav-btn" onclick="setMode('study')" id="nav-study">
+        <span class="icon">🃏</span> Estudar
+      </button>
+      <button class="nav-btn" onclick="setMode('quiz')" id="nav-quiz">
+        <span class="icon">✏️</span> Prova
+      </button>
+
+      <div class="nav-section">Temas</div>
+      <button class="nav-btn" onclick="filterTopic('trig')">
+        <span class="icon">📐</span> Trigonometria
+      </button>
+      <button class="nav-btn" onclick="filterTopic('geo')">
+        <span class="icon">🔺</span> Geometria
+      </button>
+      <button class="nav-btn" onclick="filterTopic('all')">
+        <span class="icon">✨</span> Todos
+      </button>
+    </nav>
+
+    <div class="score-badge">
+      <div class="label">Pontuação Total</div>
+      <div class="value" id="totalScore">0</div>
+      <div class="sub" id="quizCount">0 provas realizadas</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <h2 id="modeTitle">📖 Modo Aprender</h2>
+      <div class="pills" id="topicPills">
+        <button class="pill active" onclick="setPill('all', this)">Todos</button>
+        <button class="pill" onclick="setPill('trig', this)">Trigonometria</button>
+        <button class="pill" onclick="setPill('geo', this)">Geometria</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ══════════════ TEACH MODE ══════════════ -->
+      <div id="mode-teach">
+        <div class="topic-list" id="teachTopicList"></div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon purple">🤖</div>
+            <div>
+              <div class="card-title">Explicação com IA</div>
+              <div class="card-sub">Seleciona um tema acima para começar</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="explain-area" id="explainArea">
+              <div class="prompt-hint">👆 Clica num tema para receber uma explicação detalhada com IA</div>
+            </div>
+            <div class="ask-row" style="margin-top:16px">
+              <input class="ask-input" id="askInput" placeholder="Faz uma pergunta sobre o tema... ex: Como calcular sen 60°?" />
+              <button class="btn btn-primary" onclick="askQuestion()" id="askBtn">
+                <span>Perguntar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ STUDY MODE ══════════════ -->
+      <div id="mode-study" class="hidden">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon amber">🃏</div>
+            <div>
+              <div class="card-title">Flashcards</div>
+              <div class="card-sub">Clica no cartão para ver a resposta</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="flashcard-wrap">
+              <div class="progress-bar"><div class="progress-fill" id="fcProgress" style="width:0%"></div></div>
+              <div class="fc-progress" id="fcCounter">Cartão 1 de 20</div>
+              <div class="flashcard" id="flashcard" onclick="flipCard()">
+                <div class="fc-label">❓ Pergunta</div>
+                <div class="fc-question" id="fcQ">Carregando...</div>
+                <div class="fc-answer" id="fcA">—</div>
+                <div class="fc-hint">Clica para revelar a resposta</div>
+              </div>
+              <div class="fc-controls">
+                <button class="btn btn-outline" onclick="prevCard()">← Anterior</button>
+                <button class="btn btn-outline" onclick="shuffleCards()">🔀 Misturar</button>
+                <button class="btn btn-primary" onclick="nextCard()">Próximo →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ QUIZ MODE ══════════════ -->
+      <div id="mode-quiz" class="hidden">
+
+        <!-- Quiz intro -->
+        <div id="quiz-intro">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon purple">✏️</div>
+              <div>
+                <div class="card-title">Prova</div>
+                <div class="card-sub">Testa os teus conhecimentos e ganha pontos</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <p style="color:var(--muted);margin-bottom:24px;line-height:1.7">
+                A prova tem <strong style="color:var(--text)">10 questões</strong> geradas por IA sobre Trigonometria e Geometria.
+                Cada resposta certa vale <strong style="color:var(--amber)">10 pontos</strong>. Boa sorte!
+              </p>
+              <div style="display:flex;gap:12px;flex-wrap:wrap">
+                <button class="btn btn-primary" onclick="startQuiz('all')" style="font-size:15px;padding:12px 28px">
+                  🚀 Iniciar Prova (Todos)
+                </button>
+                <button class="btn btn-outline" onclick="startQuiz('trig')">📐 Só Trigonometria</button>
+                <button class="btn btn-outline" onclick="startQuiz('geo')">🔺 Só Geometria</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quiz questions -->
+        <div id="quiz-active" class="hidden">
+          <div class="quiz-header">
+            <div class="quiz-meta">
+              <div class="meta-item">Questão <span id="qNum">1</span>/10</div>
+              <div class="meta-item">Pontos <span id="qScore" style="color:var(--amber)">0</span></div>
+            </div>
+            <div class="progress-bar" style="width:300px">
+              <div class="progress-fill" id="quizProgress" style="width:0%"></div>
+            </div>
+          </div>
+
+          <div class="quiz-question" id="quizQuestion">
+            <div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          </div>
+
+          <div class="quiz-nav">
+            <button class="btn btn-primary hidden" id="nextQBtn" onclick="nextQuestion()">Próxima questão →</button>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div id="quiz-results" class="hidden">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon amber">🏆</div>
+              <div>
+                <div class="card-title">Resultados da Prova</div>
+                <div class="card-sub" id="resultDate">—</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="results-screen">
+                <div class="results-score-ring" id="scoreRing">
+                  <div class="ring-text">
+                    <div class="ring-score" id="finalScore">0</div>
+                    <div class="ring-label">pontos</div>
+                  </div>
+                </div>
+                <div class="results-grid">
+                  <div class="result-stat rs-correct">
+                    <div class="rs-val" id="resCorrect">0</div>
+                    <div class="rs-label">Certas</div>
+                  </div>
+                  <div class="result-stat rs-wrong">
+                    <div class="rs-val" id="resWrong">0</div>
+                    <div class="rs-label">Erradas</div>
+                  </div>
+                  <div class="result-stat rs-pts">
+                    <div class="rs-val" id="resPct">0%</div>
+                    <div class="rs-label">Acertos</div>
+                  </div>
+                </div>
+                <div id="aiReview" class="ai-response" style="max-width:560px;width:100%;text-align:left;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:20px"></div>
+                <div style="display:flex;gap:12px">
+                  <button class="btn btn-primary" onclick="startQuiz('all')">🔄 Nova Prova</button>
+                  <button class="btn btn-outline" onclick="showIntro()">← Voltar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+let currentMode = 'teach';
+let currentFilter = 'all';
+let selectedTopicIndex = null;
+let currentFlashcard = 0;
+let flashcardFlipped = false;
+let flashcardData = [];
+let quizQuestions = [];
+let currentQ = 0;
+let quizScore = 0;
+let correctCount = 0;
+let totalScore = 0;
+let quizCount = 0;
+let quizAnswered = false;
+let currentQuizFilter = 'all';
+
+// ── TOPICS ──
+const topics = [
+  { id:'razoes', name:'Razões Trigonométricas', icon:'📐', tag:'trig', desc:'seno, cosseno, tangente', detail:'seno, cosseno e tangente num triângulo rectângulo' },
+  { id:'angulos', name:'Ângulos Notáveis', icon:'🔢', tag:'trig', desc:'30°, 45°, 60° e os valores exactos', detail:'valores exactos de seno, cosseno e tangente para 30°, 45° e 60°' },
+  { id:'circulo', name:'Círculo Trigonométrico', icon:'⭕', tag:'trig', desc:'visualizar trig em qualquer ângulo', detail:'a interpretação geométrica das razões no círculo unitário' },
+  { id:'leis', name:'Leis dos Senos e Cossenos', icon:'📏', tag:'trig', desc:'triângulos não rectângulos', detail:'as Leis dos Senos e Cossenos e quando usar cada uma' },
+  { id:'identidades', name:'Identidades Trigonométricas', icon:'🔄', tag:'trig', desc:'sen²x + cos²x = 1 e outras', detail:'as principais identidades trigonométricas e suas aplicações' },
+  { id:'pitagoras', name:'Teorema de Pitágoras', icon:'📐', tag:'geo', desc:'a² + b² = c²', detail:'o Teorema de Pitágoras e suas aplicações práticas' },
+  { id:'triangulos', name:'Propriedades dos Triângulos', icon:'🔺', tag:'geo', desc:'ângulos internos e classificações', detail:'os tipos de triângulos, ângulos internos e relações métricas' },
+  { id:'metricas', name:'Relações Métricas', icon:'📌', tag:'geo', desc:'altura, mediana, bissetriz', detail:'as relações métricas no triângulo rectângulo' },
+  { id:'analitica', name:'Geometria Analítica', icon:'📊', tag:'geo', desc:'pontos, retas e distâncias', detail:'a distância entre dois pontos e a equação da reta no plano cartesiano' },
+];
+
+// ── FLASHCARDS ──
+const allFlashcards = [
+  { q:'Qual é a definição de seno num triângulo rectângulo?', a:'sen θ = cateto oposto / hipotenusa', tag:'trig' },
+  { q:'Qual é a definição de cosseno num triângulo rectângulo?', a:'cos θ = cateto adjacente / hipotenusa', tag:'trig' },
+  { q:'Qual é a definição de tangente?', a:'tan θ = cateto oposto / cateto adjacente', tag:'trig' },
+  { q:'Qual é o valor de sen 30°?', a:'1/2 = 0,5', tag:'trig' },
+  { q:'Qual é o valor de cos 60°?', a:'1/2 = 0,5', tag:'trig' },
+  { q:'Qual é o valor de sen 45°?', a:'√2/2 ≈ 0,707', tag:'trig' },
+  { q:'Qual é o valor de cos 30°?', a:'√3/2 ≈ 0,866', tag:'trig' },
+  { q:'Qual é o valor de tan 45°?', a:'1', tag:'trig' },
+  { q:'Qual é o valor de tan 60°?', a:'√3 ≈ 1,732', tag:'trig' },
+  { q:'Identidade fundamental da trigonometria?', a:'sen²x + cos²x = 1', tag:'trig' },
+  { q:'Quando se usa a Lei dos Cossenos?', a:'Quando se conhece 2 lados e o ângulo entre eles, ou os 3 lados', tag:'trig' },
+  { q:'Enunciado da Lei dos Senos', a:'a/sen A = b/sen B = c/sen C', tag:'trig' },
+  { q:'Enuncia o Teorema de Pitágoras', a:'a² + b² = c² (a e b catetos, c hipotenusa)', tag:'geo' },
+  { q:'Soma dos ângulos internos de um triângulo?', a:'180°', tag:'geo' },
+  { q:'Soma dos ângulos internos de um quadrilátero?', a:'360°', tag:'geo' },
+  { q:'Fórmula da distância entre dois pontos (x₁,y₁) e (x₂,y₂)?', a:'d = √[(x₂-x₁)² + (y₂-y₁)²]', tag:'geo' },
+  { q:'Fórmula do ponto médio entre (x₁,y₁) e (x₂,y₂)?', a:'M = ((x₁+x₂)/2 , (y₁+y₂)/2)', tag:'geo' },
+  { q:'Equação reduzida da reta?', a:'y = mx + b (m = declive, b = ordenada na origem)', tag:'geo' },
+  { q:'Como calcular o declive de uma reta entre dois pontos?', a:'m = (y₂ - y₁) / (x₂ - x₁)', tag:'geo' },
+  { q:'O que é a mediana de um triângulo?', a:'Segmento que une um vértice ao ponto médio do lado oposto', tag:'geo' },
+];
+
+// ── INIT ──
+function init() {
+  renderTopics();
+  initFlashcards();
+  initFloatingFormulas();
+}
+
+// ── FLOATING FORMULAS ──
+function initFloatingFormulas() {
+  const formulas = ['sen²x + cos²x = 1','a² + b² = c²','tan θ = sen/cos','d = √(Δx² + Δy²)','a/senA = b/senB','y = mx + b','cos(60°) = ½'];
+  const container = document.getElementById('floatFormulas');
+  formulas.forEach((f, i) => {
+    const el = document.createElement('div');
+    el.className = 'float-f';
+    el.textContent = f;
+    el.style.left = (10 + i * 14) + '%';
+    el.style.animationDuration = (18 + i * 4) + 's';
+    el.style.animationDelay = (i * 3) + 's';
+    container.appendChild(el);
+  });
+}
+
+// ── MODE ──
+function setMode(mode) {
+  currentMode = mode;
+  ['teach','study','quiz'].forEach(m => {
+    document.getElementById('mode-'+m).classList.toggle('hidden', m !== mode);
+    document.getElementById('nav-'+m).classList.toggle('active', m === mode);
+  });
+  const titles = { teach:'📖 Modo Aprender', study:'🃏 Modo Estudar', quiz:'✏️ Prova' };
+  document.getElementById('modeTitle').textContent = titles[mode];
+  document.getElementById('topicPills').classList.toggle('hidden', mode === 'quiz');
+}
+
+function setPill(filter, el) {
+  currentFilter = filter;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  filterTopic(filter);
+}
+
+function filterTopic(filter) {
+  currentFilter = filter;
+  if (currentMode === 'study') { initFlashcards(); }
+  else { renderTopics(); }
+}
+
+// ── TEACH MODE ──
+function renderTopics() {
+  const list = document.getElementById('teachTopicList');
+  const filtered = currentFilter === 'all' ? topics : topics.filter(t => t.tag === currentFilter);
+  list.innerHTML = filtered.map((t,i) => `
+    <div class="topic-card ${selectedTopicIndex === i ? 'selected':''}" onclick="selectTopic(${topics.indexOf(t)})">
+      <div class="t-icon">${t.icon}</div>
+      <div class="t-name">${t.name}
+        <span class="badge ${t.tag === 'trig' ? 'badge-trig':'badge-geo'}" style="margin-left:6px">${t.tag === 'trig' ? 'TRIG':'GEO'}</span>
+      </div>
+      <div class="t-desc">${t.desc}</div>
+    </div>
+  `).join('');
+}
+
+async function selectTopic(idx) {
+  selectedTopicIndex = idx;
+  renderTopics();
+  const topic = topics[idx];
+  const area = document.getElementById('explainArea');
+  area.innerHTML = '<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        messages:[{
+          role:'user',
+          content:`Explica ${topic.detail} para um estudante angolano a preparar o exame.
+
+Usa EXACTAMENTE este formato HTML. Usa notação LaTeX dentro de \\( \\) para fórmulas inline e \\[ \\] para fórmulas em bloco. Não uses markdown.
+
+<p>Uma frase clara a introduzir o conceito.</p>
+
+<div class="section-title">📐 Fórmulas Principais</div>
+<ul class="formula-list">
+  <li>
+    <span class="fl-label">Seno:</span>
+    <span class="fl-eq">\\( \\sin \\theta = \\dfrac{\\text{cateto oposto}}{\\text{hipotenusa}} \\)</span>
+  </li>
+  <!-- mais fórmulas relevantes -->
+</ul>
+
+<div class="section-title">📊 Exemplo Prático</div>
+<div class="example-box">
+  <div class="ex-intro">Triângulo rectângulo com:</div>
+  <ul class="ex-data">
+    <li>Dado 1 = valor</li>
+    <li>Dado 2 = valor</li>
+  </ul>
+  <div class="ex-calcs">
+    <div class="ex-calc-row">\\[ \\sin \\theta = \\dfrac{6}{10} = 0{,}6 \\]</div>
+    <!-- mais cálculos -->
+  </div>
+</div>
+
+<div class="tip">💡 Dica para o exame: conselho prático e directo.</div>
+
+Adapta o conteúdo ao tema "${topic.name}". Responde APENAS com o HTML, sem texto fora das tags.`
+        }]
+      })
+    });
+    const data = await res.json();
+    const html = data.content?.[0]?.text || 'Erro a obter explicação.';
+    area.innerHTML = `<div class="ai-response">${html}</div>`;
+    // Render KaTeX after content is injected
+    if (window.renderMathInElement) {
+      renderMathInElement(area, { delimiters: [
+        {left:'\\(',right:'\\)',display:false},
+        {left:'\\[',right:'\\]',display:true},
+        {left:'$$',right:'$$',display:true},
+        {left:'$',right:'$',display:false}
+      ], throwOnError: false });
+    }
+  } catch(e) {
+    area.innerHTML = `<div class="ai-response"><p style="color:var(--red)">Erro: ${e.message}</p></div>`;
+  }
+}
+
+async function askQuestion() {
+  const input = document.getElementById('askInput');
+  const q = input.value.trim();
+  if (!q) return;
+  
+  const area = document.getElementById('explainArea');
+  const btn = document.getElementById('askBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="dot"></div>';
+  
+  const topicCtx = selectedTopicIndex !== null ? topics[selectedTopicIndex].name : 'Trigonometria e Geometria';
+  area.innerHTML = '<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        messages:[{
+          role:'user',
+          content:`Contexto: estudo de ${topicCtx} para exame em Angola.
+Pergunta do estudante: "${q}"
+
+Responde em HTML com notação LaTeX para fórmulas (usa \\( \\) para inline e \\[ \\] para bloco). Usa estas classes:
+- <div class="section-title">título</div>  para secções
+- <p>texto</p>  para parágrafos
+- <ul class="formula-list"><li><span class="fl-label">Nome:</span><span class="fl-eq">\\( fórmula \\)</span></li></ul>  para listas de fórmulas
+- <div class="example-box"><div class="ex-intro">dados</div><div class="ex-calcs"><div class="ex-calc-row">\\[ cálculo \\]</div></div></div>  para exemplos
+- <div class="tip">dica</div>  para dicas
+
+Responde APENAS com o HTML, sem texto fora das tags.`
+        }]
+      })
+    });
+    const data = await res.json();
+    area.innerHTML = `<div class="ai-response">${data.content?.[0]?.text || 'Sem resposta.'}</div>`;
+    if (window.renderMathInElement) {
+      renderMathInElement(area, { delimiters: [
+        {left:'\\(',right:'\\)',display:false},
+        {left:'\\[',right:'\\]',display:true},
+        {left:'$$',right:'$$',display:true},
+        {left:'$',right:'$',display:false}
+      ], throwOnError: false });
+    }
+  } catch(e) {
+    area.innerHTML = `<div class="ai-response"><p style="color:var(--red)">Erro: ${e.message}</p></div>`;
+  }
+  
+  btn.disabled = false;
+  btn.innerHTML = '<span>Perguntar</span>';
+  input.value = '';
+}
+
+// ── FLASHCARDS ──
+function initFlashcards() {
+  const filtered = currentFilter === 'all' ? [...allFlashcards] : allFlashcards.filter(f => f.tag === currentFilter);
+  flashcardData = filtered;
+  currentFlashcard = 0;
+  renderFlashcard();
+}
+
+function renderFlashcard() {
+  const fc = flashcardData[currentFlashcard];
+  const card = document.getElementById('flashcard');
+  card.classList.remove('flipped');
+  flashcardFlipped = false;
+  document.getElementById('fcQ').textContent = fc.q;
+  document.getElementById('fcA').textContent = fc.a;
+  document.getElementById('fcCounter').textContent = `Cartão ${currentFlashcard+1} de ${flashcardData.length}`;
+  document.getElementById('fcProgress').style.width = ((currentFlashcard+1)/flashcardData.length*100) + '%';
+}
+
+function flipCard() {
+  const card = document.getElementById('flashcard');
+  flashcardFlipped = !flashcardFlipped;
+  card.classList.toggle('flipped', flashcardFlipped);
+}
+
+function nextCard() {
+  currentFlashcard = (currentFlashcard + 1) % flashcardData.length;
+  renderFlashcard();
+}
+
+function prevCard() {
+  currentFlashcard = (currentFlashcard - 1 + flashcardData.length) % flashcardData.length;
+  renderFlashcard();
+}
+
+function shuffleCards() {
+  flashcardData.sort(() => Math.random() - 0.5);
+  currentFlashcard = 0;
+  renderFlashcard();
+}
+
+// ── QUIZ ──
+async function startQuiz(filter) {
+  currentQuizFilter = filter;
+  quizQuestions = [];
+  currentQ = 0;
+  quizScore = 0;
+  correctCount = 0;
+  
+  document.getElementById('quiz-intro').classList.add('hidden');
+  document.getElementById('quiz-results').classList.add('hidden');
+  document.getElementById('quiz-active').classList.remove('hidden');
+  document.getElementById('qScore').textContent = '0';
+  document.getElementById('qNum').textContent = '1';
+  document.getElementById('quizProgress').style.width = '0%';
+  document.getElementById('nextQBtn').classList.add('hidden');
+  
+  await loadQuestion(filter);
+}
+
+async function loadQuestion(filter) {
+  quizAnswered = false;
+  document.getElementById('nextQBtn').classList.add('hidden');
+  
+  const topicFocus = filter === 'trig' ? 'Trigonometria (razões, ângulos notáveis, identidades, círculo trig, lei dos senos/cossenos)' :
+                     filter === 'geo' ? 'Geometria (Pitágoras, triângulos, relações métricas, geometria analítica)' :
+                     'Trigonometria e Geometria (razões trig, ângulos notáveis, Pitágoras, leis dos senos/cossenos, geometria analítica, triângulos)';
+  
+  document.getElementById('quizQuestion').innerHTML = '<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        messages:[{
+          role:'user',
+          content:`Gera 1 questão de escolha múltipla sobre ${topicFocus} para um exame de ensino médio em Angola.
+Questão ${currentQ+1} de 10. Varia o nível de dificuldade.
+
+Responde APENAS com JSON válido neste formato exacto:
+{
+  "question": "texto da questão",
+  "formula": "fórmula relevante ou null",
+  "options": ["A. opção","B. opção","C. opção","D. opção"],
+  "correct": 0,
+  "explanation": "explicação breve da resposta correcta",
+  "tag": "trig ou geo"
+}
+
+O campo "correct" é o ÍNDICE (0,1,2,3) da opção correcta no array options.
+Sem texto fora do JSON.`
+        }]
+      })
+    });
+    const data = await res.json();
+    let raw = data.content?.[0]?.text || '{}';
+    raw = raw.replace(/```json|```/g, '').trim();
+    const qData = JSON.parse(raw);
+    quizQuestions.push(qData);
+    renderQuestion(qData);
+  } catch(e) {
+    document.getElementById('quizQuestion').innerHTML = `<p style="color:var(--red)">Erro ao gerar questão: ${e.message}</p>`;
+  }
+}
+
+function renderQuestion(q) {
+  const tag = q.tag === 'trig' ? '<span class="badge badge-trig">TRIG</span>' : '<span class="badge badge-geo">GEO</span>';
+  const formulaHtml = q.formula ? `<div class="q-formula">${q.formula}</div>` : '';
+  const opts = q.options.map((opt, i) => `
+    <button class="option-btn" onclick="selectAnswer(${i}, ${q.correct})" id="opt-${i}">
+      <span class="option-letter">${['A','B','C','D'][i]}</span>
+      ${opt.replace(/^[A-D]\.\s*/,'')}
+    </button>
+  `).join('');
+  
+  document.getElementById('quizQuestion').innerHTML = `
+    <div class="q-number">Questão ${currentQ+1} de 10 &nbsp;•&nbsp; ${tag}</div>
+    <div class="q-text">${q.question}</div>
+    ${formulaHtml}
+    <div class="options">${opts}</div>
+    <div class="feedback-box" id="feedbackBox"></div>
+  `;
+}
+
+function selectAnswer(selected, correct) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  
+  const isCorrect = selected === correct;
+  const fb = document.getElementById('feedbackBox');
+  const qData = quizQuestions[currentQ];
+  
+  // Style options
+  for (let i = 0; i < 4; i++) {
+    const btn = document.getElementById('opt-'+i);
+    if (btn) {
+      btn.disabled = true;
+      if (i === correct) btn.classList.add('correct');
+      else if (i === selected && !isCorrect) btn.classList.add('wrong');
+    }
+  }
+  
+  // Feedback
+  fb.className = `feedback-box show ${isCorrect ? 'correct' : 'wrong'}`;
+  fb.innerHTML = isCorrect
+    ? `✅ <strong>Correcto!</strong> ${qData.explanation}`
+    : `❌ <strong>Errado.</strong> A resposta correcta é <strong>${qData.options[correct]}</strong>. ${qData.explanation}`;
+  
+  if (isCorrect) {
+    quizScore += 10;
+    correctCount++;
+    document.getElementById('qScore').textContent = quizScore;
+  }
+  
+  currentQ++;
+  document.getElementById('quizProgress').style.width = (currentQ/10*100) + '%';
+  
+  if (currentQ < 10) {
+    document.getElementById('nextQBtn').classList.remove('hidden');
+    document.getElementById('qNum').textContent = currentQ+1;
+  } else {
+    setTimeout(() => showResults(), 1200);
+  }
+}
+
+function nextQuestion() {
+  loadQuestion(currentQuizFilter);
+}
+
+async function showResults() {
+  document.getElementById('quiz-active').classList.add('hidden');
+  document.getElementById('quiz-results').classList.remove('hidden');
+  
+  totalScore += quizScore;
+  quizCount++;
+  document.getElementById('totalScore').textContent = totalScore;
+  document.getElementById('quizCount').textContent = quizCount + ' prova' + (quizCount !== 1 ? 's':' ') + ' realizada' + (quizCount !== 1 ? 's':'');
+  
+  const pct = Math.round(correctCount/10*100);
+  document.getElementById('finalScore').textContent = quizScore;
+  document.getElementById('resCorrect').textContent = correctCount;
+  document.getElementById('resWrong').textContent = 10 - correctCount;
+  document.getElementById('resPct').textContent = pct + '%';
+  document.getElementById('resultDate').textContent = new Date().toLocaleString('pt-AO');
+  
+  // Update ring
+  const ring = document.getElementById('scoreRing');
+  ring.style.background = `conic-gradient(var(--purple) 0%, var(--amber) ${pct}%, var(--border) ${pct}%)`;
+  
+  // AI review
+  const review = document.getElementById('aiReview');
+  review.innerHTML = '<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:500,
+        messages:[{
+          role:'user',
+          content:`Um estudante fez uma prova de Trigonometria e Geometria e obteve ${correctCount}/10 correctas (${pct}%).
+          
+Dá um feedback motivacional e construtivo em 3-4 frases em português. Inclui:
+1. Avaliação do resultado
+2. O que deve rever se teve menos de 7/10
+3. Encorajamento para continuar
+
+Responde APENAS com texto simples, sem HTML ou markdown.`
+        }]
+      })
+    });
+    const data = await res.json();
+    review.innerHTML = `<p style="line-height:1.7">${data.content?.[0]?.text || ''}</p>`;
+  } catch(e) {
+    review.innerHTML = `<p>Parabéns por completares a prova!</p>`;
+  }
+}
+
+function showIntro() {
+  document.getElementById('quiz-intro').classList.remove('hidden');
+  document.getElementById('quiz-results').classList.add('hidden');
+  document.getElementById('quiz-active').classList.add('hidden');
+}
+
+// ── START ──
+init();
+</script>
+</body>
+</html>
