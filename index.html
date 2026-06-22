@@ -37,6 +37,7 @@
     overflow-x: hidden;
   }
 
+  /* Dot grid background */
   body::before {
     content: '';
     position: fixed;
@@ -54,7 +55,7 @@
     min-height: 100vh;
   }
 
-  /* SIDEBAR */
+  /* ── SIDEBAR ── */
   .sidebar {
     width: 240px;
     background: var(--surface);
@@ -146,7 +147,7 @@
   }
   .score-badge .sub { font-size: 12px; color: var(--muted); }
 
-  /* MAIN */
+  /* ── MAIN ── */
   .main {
     margin-left: 240px;
     flex: 1;
@@ -183,7 +184,7 @@
 
   .content { padding: 32px; flex: 1; }
 
-  /* CARDS */
+  /* ── CARDS ── */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -210,7 +211,7 @@
   .card-sub { font-size: 12px; color: var(--muted); }
   .card-body { padding: 24px; }
 
-  /* TABS */
+  /* ── SECTION TABS ── */
   .tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--surface); border-radius: 10px; padding: 4px; }
   .tab-btn {
     flex: 1; padding: 8px 16px; border: none; background: transparent;
@@ -219,7 +220,7 @@
   }
   .tab-btn.active { background: var(--surface2); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
 
-  /* TEACH MODE */
+  /* ── TEACH MODE ── */
   .topic-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
   .topic-card {
     padding: 16px;
@@ -255,6 +256,7 @@
     color: var(--text);
   }
 
+  /* Section headers like Copilot */
   .ai-response .section-title {
     font-family: var(--font-display);
     font-size: 18px;
@@ -269,8 +271,10 @@
   }
   .ai-response .section-title:first-child { margin-top: 0; }
 
+  /* Intro paragraph */
   .ai-response p { margin-bottom: 14px; line-height: 1.75; }
 
+  /* Formula list — bullet style like Copilot */
   .ai-response .formula-list {
     list-style: none;
     padding: 0;
@@ -303,6 +307,7 @@
   }
   .ai-response .formula-list li .fl-eq .katex { color: var(--amber-light); }
 
+  /* Practical example box */
   .ai-response .example-box {
     background: var(--surface2);
     border: 1px solid var(--border);
@@ -353,6 +358,7 @@
   }
   .ai-response .example-box .ex-calc-row .katex { font-size: 17px; }
 
+  /* Inline formula block */
   .ai-response .formula {
     background: rgba(124,58,237,0.08);
     border: 1px solid rgba(124,58,237,0.25);
@@ -366,9 +372,11 @@
   }
   .ai-response .formula .katex { color: var(--amber-light); font-size: 17px; }
 
+  /* Bullet lists */
   .ai-response ul { padding-left: 22px; margin-bottom: 14px; }
   .ai-response li { margin-bottom: 7px; line-height: 1.65; }
 
+  /* Tip box */
   .ai-response .tip {
     background: rgba(16,185,129,0.07);
     border: 1px solid rgba(16,185,129,0.2);
@@ -380,6 +388,7 @@
     line-height: 1.6;
   }
 
+  /* KaTeX global override for dark theme */
   .katex { color: inherit; }
   .katex-display { margin: 0; }
 
@@ -428,7 +437,7 @@
   }
   .btn-outline:hover { border-color: var(--purple-light); color: var(--purple-light); }
 
-  /* FLASHCARD MODE */
+  /* ── FLASHCARD MODE ── */
   .flashcard-wrap {
     display: flex;
     flex-direction: column;
@@ -502,7 +511,7 @@
     transition: width 0.3s;
   }
 
-  /* QUIZ MODE */
+  /* ── QUIZ MODE ── */
   .quiz-header {
     display: flex;
     align-items: center;
@@ -602,7 +611,7 @@
 
   .quiz-nav { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
 
-  /* RESULTS */
+  /* ── RESULTS ── */
   .results-screen {
     display: flex;
     flex-direction: column;
@@ -646,7 +655,7 @@
   .rs-wrong .rs-val { color: var(--red); }
   .rs-pts .rs-val { color: var(--amber); }
 
-  /* LOADING */
+  /* ── LOADING ── */
   .loader {
     display: flex;
     gap: 6px;
@@ -659,7 +668,7 @@
   .dot:nth-child(3) { animation-delay: 0.4s; background: var(--amber); }
   @keyframes bounce { 0%,80%,100%{ transform:scale(0); } 40%{ transform:scale(1); } }
 
-  /* FLOATING FORMULAS */
+  /* ── FLOATING FORMULAS ── */
   .float-formulas {
     position: fixed;
     inset: 0;
@@ -683,7 +692,7 @@
     100% { transform: translateY(-100px) rotate(-10deg); opacity: 0; }
   }
 
-  /* BADGE */
+  /* ── TOPIC BADGE ── */
   .badge {
     display: inline-flex;
     align-items: center;
@@ -698,6 +707,7 @@
 
   .hidden { display: none !important; }
 
+  /* Scrollbar */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -765,7 +775,7 @@
 
     <div class="content">
 
-      <!-- TEACH MODE -->
+      <!-- ══════════════ TEACH MODE ══════════════ -->
       <div id="mode-teach">
         <div class="topic-list" id="teachTopicList"></div>
 
@@ -791,7 +801,7 @@
         </div>
       </div>
 
-      <!-- STUDY MODE -->
+      <!-- ══════════════ STUDY MODE ══════════════ -->
       <div id="mode-study" class="hidden">
         <div class="card">
           <div class="card-header">
@@ -821,9 +831,10 @@
         </div>
       </div>
 
-      <!-- QUIZ MODE -->
+      <!-- ══════════════ QUIZ MODE ══════════════ -->
       <div id="mode-quiz" class="hidden">
 
+        <!-- Quiz intro -->
         <div id="quiz-intro">
           <div class="card">
             <div class="card-header">
@@ -849,6 +860,7 @@
           </div>
         </div>
 
+        <!-- Quiz questions -->
         <div id="quiz-active" class="hidden">
           <div class="quiz-header">
             <div class="quiz-meta">
@@ -869,6 +881,7 @@
           </div>
         </div>
 
+        <!-- Results -->
         <div id="quiz-results" class="hidden">
           <div class="card">
             <div class="card-header">
@@ -909,7 +922,6 @@
             </div>
           </div>
         </div>
-
       </div>
 
     </div>
@@ -917,7 +929,7 @@
 </div>
 
 <script>
-// STATE
+// ── STATE ──
 let currentMode = 'teach';
 let currentFilter = 'all';
 let selectedTopicIndex = null;
@@ -933,7 +945,7 @@ let quizCount = 0;
 let quizAnswered = false;
 let currentQuizFilter = 'all';
 
-// TOPICS
+// ── TOPICS ──
 const topics = [
   { id:'razoes', name:'Razões Trigonométricas', icon:'📐', tag:'trig', desc:'seno, cosseno, tangente', detail:'seno, cosseno e tangente num triângulo rectângulo' },
   { id:'angulos', name:'Ângulos Notáveis', icon:'🔢', tag:'trig', desc:'30°, 45°, 60° e os valores exactos', detail:'valores exactos de seno, cosseno e tangente para 30°, 45° e 60°' },
@@ -946,7 +958,7 @@ const topics = [
   { id:'analitica', name:'Geometria Analítica', icon:'📊', tag:'geo', desc:'pontos, retas e distâncias', detail:'a distância entre dois pontos e a equação da reta no plano cartesiano' },
 ];
 
-// FLASHCARDS
+// ── FLASHCARDS ──
 const allFlashcards = [
   { q:'Qual é a definição de seno num triângulo rectângulo?', a:'sen θ = cateto oposto / hipotenusa', tag:'trig' },
   { q:'Qual é a definição de cosseno num triângulo rectângulo?', a:'cos θ = cateto adjacente / hipotenusa', tag:'trig' },
@@ -970,29 +982,14 @@ const allFlashcards = [
   { q:'O que é a mediana de um triângulo?', a:'Segmento que une um vértice ao ponto médio do lado oposto', tag:'geo' },
 ];
 
-// API CALL (via proxy integrada — sem API key no browser)
-async function callClaude(userContent, maxTokens = 1000) {
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: maxTokens,
-      messages: [{ role: 'user', content: userContent }]
-    })
-  });
-  const data = await response.json();
-  return data.content?.[0]?.text || '';
-}
-
-// INIT
+// ── INIT ──
 function init() {
   renderTopics();
   initFlashcards();
   initFloatingFormulas();
 }
 
-// FLOATING FORMULAS
+// ── FLOATING FORMULAS ──
 function initFloatingFormulas() {
   const formulas = ['sen²x + cos²x = 1','a² + b² = c²','tan θ = sen/cos','d = √(Δx² + Δy²)','a/senA = b/senB','y = mx + b','cos(60°) = ½'];
   const container = document.getElementById('floatFormulas');
@@ -1007,7 +1004,7 @@ function initFloatingFormulas() {
   });
 }
 
-// MODE
+// ── MODE ──
 function setMode(mode) {
   currentMode = mode;
   ['teach','study','quiz'].forEach(m => {
@@ -1032,12 +1029,12 @@ function filterTopic(filter) {
   else { renderTopics(); }
 }
 
-// TEACH MODE
+// ── TEACH MODE ──
 function renderTopics() {
   const list = document.getElementById('teachTopicList');
   const filtered = currentFilter === 'all' ? topics : topics.filter(t => t.tag === currentFilter);
   list.innerHTML = filtered.map((t,i) => `
-    <div class="topic-card ${selectedTopicIndex === topics.indexOf(t) ? 'selected':''}" onclick="selectTopic(${topics.indexOf(t)})">
+    <div class="topic-card ${selectedTopicIndex === i ? 'selected':''}" onclick="selectTopic(${topics.indexOf(t)})">
       <div class="t-icon">${t.icon}</div>
       <div class="t-name">${t.name}
         <span class="badge ${t.tag === 'trig' ? 'badge-trig':'badge-geo'}" style="margin-left:6px">${t.tag === 'trig' ? 'TRIG':'GEO'}</span>
@@ -1055,7 +1052,15 @@ async function selectTopic(idx) {
   area.innerHTML = '<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
 
   try {
-    const html = await callClaude(`Explica ${topic.detail} para um estudante angolano a preparar o exame.
+    const res = await fetch('/api/claude', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        messages:[{
+          role:'user',
+          content:`Explica ${topic.detail} para um estudante angolano a preparar o exame.
 
 Usa EXACTAMENTE este formato HTML. Usa notação LaTeX dentro de \\( \\) para fórmulas inline e \\[ \\] para fórmulas em bloco. Não uses markdown.
 
@@ -1067,6 +1072,7 @@ Usa EXACTAMENTE este formato HTML. Usa notação LaTeX dentro de \\( \\) para f�
     <span class="fl-label">Seno:</span>
     <span class="fl-eq">\\( \\sin \\theta = \\dfrac{\\text{cateto oposto}}{\\text{hipotenusa}} \\)</span>
   </li>
+  <!-- mais fórmulas relevantes -->
 </ul>
 
 <div class="section-title">📊 Exemplo Prático</div>
@@ -1078,15 +1084,28 @@ Usa EXACTAMENTE este formato HTML. Usa notação LaTeX dentro de \\( \\) para f�
   </ul>
   <div class="ex-calcs">
     <div class="ex-calc-row">\\[ \\sin \\theta = \\dfrac{6}{10} = 0{,}6 \\]</div>
+    <!-- mais cálculos -->
   </div>
 </div>
 
 <div class="tip">💡 Dica para o exame: conselho prático e directo.</div>
 
-Adapta o conteúdo ao tema "${topic.name}". Responde APENAS com o HTML, sem texto fora das tags.`);
-
+Adapta o conteúdo ao tema "${topic.name}". Responde APENAS com o HTML, sem texto fora das tags.`
+        }]
+      })
+    });
+    const data = await res.json();
+    const html = data.content?.[0]?.text || 'Erro a obter explicação.';
     area.innerHTML = `<div class="ai-response">${html}</div>`;
-    renderKatex(area);
+    // Render KaTeX after content is injected
+    if (window.renderMathInElement) {
+      renderMathInElement(area, { delimiters: [
+        {left:'\\(',right:'\\)',display:false},
+        {left:'\\[',right:'\\]',display:true},
+        {left:'$$',right:'$$',display:true},
+        {left:'$',right:'$',display:false}
+      ], throwOnError: false });
+    }
   } catch(e) {
     area.innerHTML = `<div class="ai-response"><p style="color:var(--red)">Erro: ${e.message}</p></div>`;
   }
@@ -1096,17 +1115,25 @@ async function askQuestion() {
   const input = document.getElementById('askInput');
   const q = input.value.trim();
   if (!q) return;
-
+  
   const area = document.getElementById('explainArea');
   const btn = document.getElementById('askBtn');
   btn.disabled = true;
   btn.innerHTML = '<div class="dot"></div>';
-
+  
   const topicCtx = selectedTopicIndex !== null ? topics[selectedTopicIndex].name : 'Trigonometria e Geometria';
   area.innerHTML = '<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-
+  
   try {
-    const html = await callClaude(`Contexto: estudo de ${topicCtx} para exame em Angola.
+    const res = await fetch('/api/claude', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        messages:[{
+          role:'user',
+          content:`Contexto: estudo de ${topicCtx} para exame em Angola.
 Pergunta do estudante: "${q}"
 
 Responde em HTML com notação LaTeX para fórmulas (usa \\( \\) para inline e \\[ \\] para bloco). Usa estas classes:
@@ -1116,34 +1143,30 @@ Responde em HTML com notação LaTeX para fórmulas (usa \\( \\) para inline e \
 - <div class="example-box"><div class="ex-intro">dados</div><div class="ex-calcs"><div class="ex-calc-row">\\[ cálculo \\]</div></div></div>  para exemplos
 - <div class="tip">dica</div>  para dicas
 
-Responde APENAS com o HTML, sem texto fora das tags.`);
-
-    area.innerHTML = `<div class="ai-response">${html}</div>`;
-    renderKatex(area);
+Responde APENAS com o HTML, sem texto fora das tags.`
+        }]
+      })
+    });
+    const data = await res.json();
+    area.innerHTML = `<div class="ai-response">${data.content?.[0]?.text || 'Sem resposta.'}</div>`;
+    if (window.renderMathInElement) {
+      renderMathInElement(area, { delimiters: [
+        {left:'\\(',right:'\\)',display:false},
+        {left:'\\[',right:'\\]',display:true},
+        {left:'$$',right:'$$',display:true},
+        {left:'$',right:'$',display:false}
+      ], throwOnError: false });
+    }
   } catch(e) {
     area.innerHTML = `<div class="ai-response"><p style="color:var(--red)">Erro: ${e.message}</p></div>`;
   }
-
+  
   btn.disabled = false;
   btn.innerHTML = '<span>Perguntar</span>';
   input.value = '';
 }
 
-function renderKatex(el) {
-  if (window.renderMathInElement) {
-    renderMathInElement(el, {
-      delimiters: [
-        {left:'\\(',right:'\\)',display:false},
-        {left:'\\[',right:'\\]',display:true},
-        {left:'$$',right:'$$',display:true},
-        {left:'$',right:'$',display:false}
-      ],
-      throwOnError: false
-    });
-  }
-}
-
-// FLASHCARDS
+// ── FLASHCARDS ──
 function initFlashcards() {
   const filtered = currentFilter === 'all' ? [...allFlashcards] : allFlashcards.filter(f => f.tag === currentFilter);
   flashcardData = filtered;
@@ -1184,14 +1207,14 @@ function shuffleCards() {
   renderFlashcard();
 }
 
-// QUIZ
+// ── QUIZ ──
 async function startQuiz(filter) {
   currentQuizFilter = filter;
   quizQuestions = [];
   currentQ = 0;
   quizScore = 0;
   correctCount = 0;
-
+  
   document.getElementById('quiz-intro').classList.add('hidden');
   document.getElementById('quiz-results').classList.add('hidden');
   document.getElementById('quiz-active').classList.remove('hidden');
@@ -1199,22 +1222,30 @@ async function startQuiz(filter) {
   document.getElementById('qNum').textContent = '1';
   document.getElementById('quizProgress').style.width = '0%';
   document.getElementById('nextQBtn').classList.add('hidden');
-
+  
   await loadQuestion(filter);
 }
 
 async function loadQuestion(filter) {
   quizAnswered = false;
   document.getElementById('nextQBtn').classList.add('hidden');
-
+  
   const topicFocus = filter === 'trig' ? 'Trigonometria (razões, ângulos notáveis, identidades, círculo trig, lei dos senos/cossenos)' :
                      filter === 'geo' ? 'Geometria (Pitágoras, triângulos, relações métricas, geometria analítica)' :
                      'Trigonometria e Geometria (razões trig, ângulos notáveis, Pitágoras, leis dos senos/cossenos, geometria analítica, triângulos)';
-
+  
   document.getElementById('quizQuestion').innerHTML = '<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-
+  
   try {
-    const raw = await callClaude(`Gera 1 questão de escolha múltipla sobre ${topicFocus} para um exame de ensino médio em Angola.
+    const res = await fetch('/api/claude', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        messages:[{
+          role:'user',
+          content:`Gera 1 questão de escolha múltipla sobre ${topicFocus} para um exame de ensino médio em Angola.
 Questão ${currentQ+1} de 10. Varia o nível de dificuldade.
 
 Responde APENAS com JSON válido neste formato exacto:
@@ -1228,10 +1259,14 @@ Responde APENAS com JSON válido neste formato exacto:
 }
 
 O campo "correct" é o ÍNDICE (0,1,2,3) da opção correcta no array options.
-Sem texto fora do JSON.`);
-
-    const cleaned = raw.replace(/```json|```/g, '').trim();
-    const qData = JSON.parse(cleaned);
+Sem texto fora do JSON.`
+        }]
+      })
+    });
+    const data = await res.json();
+    let raw = data.content?.[0]?.text || '{}';
+    raw = raw.replace(/```json|```/g, '').trim();
+    const qData = JSON.parse(raw);
     quizQuestions.push(qData);
     renderQuestion(qData);
   } catch(e) {
@@ -1248,7 +1283,7 @@ function renderQuestion(q) {
       ${opt.replace(/^[A-D]\.\s*/,'')}
     </button>
   `).join('');
-
+  
   document.getElementById('quizQuestion').innerHTML = `
     <div class="q-number">Questão ${currentQ+1} de 10 &nbsp;•&nbsp; ${tag}</div>
     <div class="q-text">${q.question}</div>
@@ -1261,11 +1296,12 @@ function renderQuestion(q) {
 function selectAnswer(selected, correct) {
   if (quizAnswered) return;
   quizAnswered = true;
-
+  
   const isCorrect = selected === correct;
   const fb = document.getElementById('feedbackBox');
   const qData = quizQuestions[currentQ];
-
+  
+  // Style options
   for (let i = 0; i < 4; i++) {
     const btn = document.getElementById('opt-'+i);
     if (btn) {
@@ -1274,21 +1310,22 @@ function selectAnswer(selected, correct) {
       else if (i === selected && !isCorrect) btn.classList.add('wrong');
     }
   }
-
+  
+  // Feedback
   fb.className = `feedback-box show ${isCorrect ? 'correct' : 'wrong'}`;
   fb.innerHTML = isCorrect
     ? `✅ <strong>Correcto!</strong> ${qData.explanation}`
     : `❌ <strong>Errado.</strong> A resposta correcta é <strong>${qData.options[correct]}</strong>. ${qData.explanation}`;
-
+  
   if (isCorrect) {
     quizScore += 10;
     correctCount++;
     document.getElementById('qScore').textContent = quizScore;
   }
-
+  
   currentQ++;
   document.getElementById('quizProgress').style.width = (currentQ/10*100) + '%';
-
+  
   if (currentQ < 10) {
     document.getElementById('nextQBtn').classList.remove('hidden');
     document.getElementById('qNum').textContent = currentQ+1;
@@ -1304,36 +1341,49 @@ function nextQuestion() {
 async function showResults() {
   document.getElementById('quiz-active').classList.add('hidden');
   document.getElementById('quiz-results').classList.remove('hidden');
-
+  
   totalScore += quizScore;
   quizCount++;
   document.getElementById('totalScore').textContent = totalScore;
   document.getElementById('quizCount').textContent = quizCount + ' prova' + (quizCount !== 1 ? 's':' ') + ' realizada' + (quizCount !== 1 ? 's':'');
-
+  
   const pct = Math.round(correctCount/10*100);
   document.getElementById('finalScore').textContent = quizScore;
   document.getElementById('resCorrect').textContent = correctCount;
   document.getElementById('resWrong').textContent = 10 - correctCount;
   document.getElementById('resPct').textContent = pct + '%';
   document.getElementById('resultDate').textContent = new Date().toLocaleString('pt-AO');
-
+  
+  // Update ring
   const ring = document.getElementById('scoreRing');
   ring.style.background = `conic-gradient(var(--purple) 0%, var(--amber) ${pct}%, var(--border) ${pct}%)`;
-
+  
+  // AI review
   const review = document.getElementById('aiReview');
   review.innerHTML = '<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-
+  
   try {
-    const text = await callClaude(`Um estudante fez uma prova de Trigonometria e Geometria e obteve ${correctCount}/10 correctas (${pct}%).
-
+    const res = await fetch('/api/claude', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:500,
+        messages:[{
+          role:'user',
+          content:`Um estudante fez uma prova de Trigonometria e Geometria e obteve ${correctCount}/10 correctas (${pct}%).
+          
 Dá um feedback motivacional e construtivo em 3-4 frases em português. Inclui:
 1. Avaliação do resultado
 2. O que deve rever se teve menos de 7/10
 3. Encorajamento para continuar
 
-Responde APENAS com texto simples, sem HTML ou markdown.`, 500);
-
-    review.innerHTML = `<p style="line-height:1.7">${text}</p>`;
+Responde APENAS com texto simples, sem HTML ou markdown.`
+        }]
+      })
+    });
+    const data = await res.json();
+    review.innerHTML = `<p style="line-height:1.7">${data.content?.[0]?.text || ''}</p>`;
   } catch(e) {
     review.innerHTML = `<p>Parabéns por completares a prova!</p>`;
   }
@@ -1345,7 +1395,7 @@ function showIntro() {
   document.getElementById('quiz-active').classList.add('hidden');
 }
 
-// START
+// ── START ──
 init();
 </script>
 </body>
