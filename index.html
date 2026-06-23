@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MatExame 12 — Preparação para o Exame Nacional</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<script src="https://www.desmos.com/api/v1.8/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+<style>
+  :root {
+    --navy: #0A1628;
+    --navy-card: #111F36;
+    --navy-light: #1A2E4A;
+    --indigo: #6366F1;
+    --indigo-light: #818CF8;
+    --gold: #F59E0B;
+    --gold-light: #FCD34D;
+    --emerald: #10B981;
+    --rose: #F43F5E;
+    --text: #F0F4FF;
+    --text-muted: #94A3B8;
+    --border: #1E3A5F;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* ── MOBILE MENU BTN ── */
+  .menu-toggle {
+    display: none;
+    background: none; border: 1px solid var(--border);
+    color: var(--text); width: 36px; height: 36px;
+    border-radius: 8px; cursor: pointer; font-size: 18px;
+    align-items: center; justify-content: center;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .menu-toggle { display: flex; }
+
+    header { padding: 0 14px; }
+    .logo { font-size: 16px; }
+    .logo span { display: none; }
+    #progress-bar-wrap { width: 100px; }
+
+    .sidebar {
+      position: fixed; top: 60px; left: 0; bottom: 0;
+      z-index: 200; transform: translateX(-100%);
+      transition: transform .25s ease;
+      width: 260px; min-width: 260px;
+    }
+    .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,.5); }
+
+    .main { width: 100%; }
+
+    #learn-panel, #practice-panel, #exam-panel { padding: 16px; }
+
+    .content-card { padding: 18px; }
+    .topic-title { font-size: 20px; }
+
+    .props-grid { grid-template-columns: 1fr; }
+
+    .content-topbar { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
+    .action-btns { flex-wrap: wrap; }
+
+    .chat-messages { padding: 12px 14px; }
+    .chat-input-wrap { padding: 10px 14px; }
+    .msg { max-width: 95%; }
+
+    .mode-btn { padding: 5px 10px; font-size: 11px; }
+
+    .question-card { padding: 18px; }
+    .score-card { padding: 24px 16px; }
+    .score-big { font-size: 48px; }
+
+    .welcome-card { padding: 24px 16px; }
+    .welcome-card h1 { font-size: 22px; }
+
+    .header-right { gap: 8px; }
+  }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #0A1628 0%, #111F36 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  }
+  .logo {
+    font-size: 20px; font-weight: 700;
+    background: linear-gradient(90deg, var(--indigo-light), var(--gold));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .logo span { -webkit-text-fill-color: var(--text-muted); font-weight: 300; font-size: 13px; margin-left: 8px; }
+  .header-right { display: flex; gap: 12px; align-items: center; }
+  .mode-btn {
+    background: var(--navy-light); border: 1px solid var(--border);
+    color: var(--text-muted); padding: 6px 14px; border-radius: 20px;
+    font-size: 12px; cursor: pointer; font-family: inherit;
+    transition: all .2s;
+  }
+  .mode-btn.active, .mode-btn:hover { background: var(--indigo); color: white; border-color: var(--indigo); }
+  #progress-bar-wrap {
+    width: 180px; height: 6px; background: var(--navy-light);
+    border-radius: 3px; overflow: hidden;
+  }
+  #progress-bar { height: 100%; background: linear-gradient(90deg, var(--indigo), var(--gold)); width: 0%; transition: width .5s; border-radius: 3px; }
+
+  /* ── LAYOUT ── */
+  .app { display: flex; margin-top: 60px; min-height: calc(100vh - 60px); }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 280px; min-width: 280px;
+    background: var(--navy-card);
+    border-right: 1px solid var(--border);
+    overflow-y: auto; height: calc(100vh - 60px);
+    position: sticky; top: 60px;
+    padding-bottom: 24px;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .trimester-label {
+    padding: 16px 20px 8px;
+    font-size: 10px; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--text-muted);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .trimester-label::after { content:''; flex:1; height:1px; background: var(--border); }
+
+  .topic-btn {
+    width: 100%; text-align: left;
+    padding: 10px 20px 10px 28px;
+    background: none; border: none; color: var(--text-muted);
+    font-family: 'Space Grotesk', sans-serif; font-size: 13px;
+    cursor: pointer; transition: all .15s; border-left: 3px solid transparent;
+    line-height: 1.4;
+  }
+  .topic-btn:hover { color: var(--text); background: rgba(99,102,241,.08); border-left-color: var(--indigo); }
+  .topic-btn.active {
+    color: var(--indigo-light); background: rgba(99,102,241,.14);
+    border-left-color: var(--indigo); font-weight: 600;
+  }
+  .topic-btn.done { color: var(--emerald); }
+  .topic-btn.done::after { content: ' ✓'; font-size: 11px; }
+
+  /* ── MAIN ── */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+  /* MODE PANELS */
+  .panel { display: none; flex: 1; flex-direction: column; }
+  .panel.active { display: flex; }
+
+  /* LEARN PANEL */
+  #learn-panel { padding: 32px; overflow-y: auto; max-height: calc(100vh - 60px); gap: 24px; }
+  #learn-panel::-webkit-scrollbar { width: 6px; }
+  #learn-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .content-card {
+    background: var(--navy-card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px; animation: slideUp .3s ease;
+  }
+  @keyframes slideUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform:none; } }
+
+  .topic-title {
+    font-size: 26px; font-weight: 700; margin-bottom: 6px;
+    background: linear-gradient(90deg, var(--text) 60%, var(--indigo-light));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .topic-subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 24px; }
+
+  .section-heading {
+    font-size: 13px; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--indigo-light);
+    margin: 28px 0 12px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .explanation {
+    font-family: 'Crimson Pro', serif; font-size: 17px;
+    line-height: 1.75; color: #CBD5E1;
+  }
+
+  /* FORMULA BOX */
+  .formula-box {
+    background: linear-gradient(135deg, #0D1F38 0%, #0F2440 100%);
+    border: 1px solid var(--indigo);
+    border-left: 4px solid var(--indigo);
+    border-radius: 12px; padding: 20px 24px; margin: 16px 0;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .formula-box::before {
+    content: 'FÓRMULA'; position: absolute; top: 8px; right: 12px;
+    font-size: 9px; font-weight: 700; letter-spacing: 2px;
+    color: var(--indigo-light); opacity: .6;
+  }
+  .formula-box .MathJax { font-size: 1.3em !important; }
+
+  /* EXAMPLE BOX */
+  .example-box {
+    background: linear-gradient(135deg, #0D2418 0%, #0F2C1E 100%);
+    border: 1px solid var(--emerald);
+    border-left: 4px solid var(--emerald);
+    border-radius: 12px; padding: 20px 24px; margin: 16px 0;
+  }
+  .example-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    color: var(--emerald); text-transform: uppercase; margin-bottom: 10px;
+  }
+  .example-box .step { margin: 8px 0; font-size: 15px; color: #A7F3D0; }
+  .example-box .step strong { color: var(--gold-light); }
+
+  /* WARNING / NOTE BOX */
+  .note-box {
+    background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.3);
+    border-left: 4px solid var(--gold);
+    border-radius: 12px; padding: 16px 20px; margin: 16px 0;
+    font-size: 14px; color: #FDE68A;
+  }
+  .note-box strong { color: var(--gold); }
+
+  /* PROPERTIES GRID */
+  .props-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+  .prop-card {
+    background: rgba(99,102,241,.08); border: 1px solid rgba(99,102,241,.2);
+    border-radius: 10px; padding: 14px 16px; text-align: center;
+  }
+  .prop-card .prop-name { font-size: 10px; color: var(--indigo-light); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+
+  /* ── GRAPH ── */
+  .graph-container {
+    background: var(--navy-card);
+    border: 1px solid var(--indigo);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+  .graph-label {
+    padding: 8px 16px;
+    font-size: 11px; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--indigo-light);
+    background: rgba(99,102,241,.08);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .graph-desc {
+    padding: 10px 16px;
+    font-size: 13px; color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    line-height: 1.5;
+  }
+  #desmos-calc { width: 100%; height: 320px; }
+
+  /* AI LOADING */
+  .ai-loading { display: flex; gap: 6px; align-items: center; padding: 8px 0; }
+  .ai-dot { width: 8px; height: 8px; background: var(--indigo); border-radius: 50%; animation: pulse 1.2s ease infinite; }
+  .ai-dot:nth-child(2) { animation-delay: .2s; }
+  .ai-dot:nth-child(3) { animation-delay: .4s; }
+  @keyframes pulse { 0%,80%,100%{transform:scale(.6);opacity:.4} 40%{transform:scale(1);opacity:1} }
+
+  /* PRACTICE & EXAM PANELS */
+  #practice-panel, #exam-panel { padding: 32px; overflow-y: auto; max-height: calc(100vh - 60px); gap: 20px; }
+
+  .question-card {
+    background: var(--navy-card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px; animation: slideUp .3s ease;
+  }
+  .question-num {
+    font-size: 11px; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;
+  }
+  .question-text { font-size: 16px; line-height: 1.6; margin-bottom: 20px; }
+  .question-text .MathJax { font-size: 1.1em !important; }
+
+  .options-list { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn {
+    background: var(--navy-light); border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 14px 18px; text-align: left;
+    color: var(--text); font-family: 'Space Grotesk', sans-serif; font-size: 14px;
+    cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 12px;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--indigo); background: rgba(99,102,241,.1); }
+  .option-btn.correct { border-color: var(--emerald); background: rgba(16,185,129,.12); color: #6EE7B7; }
+  .option-btn.wrong { border-color: var(--rose); background: rgba(244,63,94,.1); color: #FDA4AF; }
+  .option-btn:disabled { cursor: default; }
+  .opt-letter {
+    width: 28px; height: 28px; min-width: 28px;
+    border: 1.5px solid currentColor; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+  }
+
+  .answer-reveal {
+    margin-top: 16px; padding: 16px 20px;
+    background: rgba(99,102,241,.08); border: 1px solid rgba(99,102,241,.2);
+    border-radius: 10px; font-size: 14px; color: #CBD5E1; display: none;
+  }
+  .answer-reveal.show { display: block; }
+  .answer-reveal .solution-step { margin: 6px 0; }
+
+  .next-btn {
+    margin-top: 16px; background: var(--indigo); border: none;
+    color: white; font-family: 'Space Grotesk', sans-serif; font-weight: 600;
+    padding: 12px 28px; border-radius: 10px; cursor: pointer;
+    font-size: 14px; transition: all .2s; display: none;
+  }
+  .next-btn.show { display: inline-flex; align-items: center; gap: 8px; }
+  .next-btn:hover { background: var(--indigo-light); transform: translateY(-1px); }
+
+  /* SCORE */
+  .score-card {
+    background: linear-gradient(135deg, var(--navy-card), #1A1040);
+    border: 1px solid var(--indigo); border-radius: 16px;
+    padding: 40px; text-align: center; animation: slideUp .4s ease;
+  }
+  .score-big { font-size: 64px; font-weight: 700; color: var(--indigo-light); line-height: 1; }
+  .score-label { font-size: 14px; color: var(--text-muted); margin-top: 8px; }
+  .restart-btn {
+    margin-top: 24px; background: var(--indigo); border: none;
+    color: white; font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600; padding: 14px 32px; border-radius: 10px;
+    cursor: pointer; font-size: 15px; transition: all .2s;
+  }
+  .restart-btn:hover { background: var(--indigo-light); }
+
+  /* AI CHAT PANEL */
+  #chat-panel {
+    display: none; flex-direction: column;
+    height: calc(100vh - 60px);
+  }
+  #chat-panel.active { display: flex; }
+  .chat-header {
+    padding: 20px 28px 16px; border-bottom: 1px solid var(--border);
+    background: var(--navy-card);
+  }
+  .chat-header h2 { font-size: 16px; font-weight: 600; }
+  .chat-header p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .chat-messages {
+    flex: 1; overflow-y: auto; padding: 20px 28px; display: flex;
+    flex-direction: column; gap: 16px;
+  }
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: var(--border); }
+
+  .msg { max-width: 80%; display: flex; flex-direction: column; gap: 4px; }
+  .msg.user { align-self: flex-end; align-items: flex-end; }
+  .msg.ai { align-self: flex-start; }
+  .msg-bubble {
+    padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.6;
+  }
+  .msg.user .msg-bubble {
+    background: var(--indigo); color: white;
+    border-bottom-right-radius: 4px;
+  }
+  .msg.ai .msg-bubble {
+    background: var(--navy-card); border: 1px solid var(--border);
+    color: var(--text); border-bottom-left-radius: 4px;
+  }
+  .msg-time { font-size: 10px; color: var(--text-muted); }
+  .chat-input-wrap {
+    padding: 16px 28px; border-top: 1px solid var(--border);
+    background: var(--navy-card); display: flex; gap: 12px; align-items: flex-end;
+  }
+  #chat-input {
+    flex: 1; background: var(--navy-light); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 12px 16px; color: var(--text);
+    font-family: 'Space Grotesk', sans-serif; font-size: 14px;
+    resize: none; min-height: 48px; max-height: 120px;
+    transition: border-color .2s;
+  }
+  #chat-input:focus { outline: none; border-color: var(--indigo); }
+  #chat-input::placeholder { color: var(--text-muted); }
+  #send-btn {
+    background: var(--indigo); border: none; color: white;
+    width: 48px; height: 48px; border-radius: 12px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; transition: all .2s; flex-shrink: 0;
+  }
+  #send-btn:hover { background: var(--indigo-light); transform: scale(1.05); }
+  #send-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* TOPBAR ABOVE CONTENT */
+  .content-topbar {
+    padding: 16px 32px; border-bottom: 1px solid var(--border);
+    background: var(--navy-card); display: flex; align-items: center;
+    justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .content-topbar h3 { font-size: 14px; font-weight: 600; color: var(--text-muted); }
+  .action-btns { display: flex; gap: 8px; }
+  .act-btn {
+    background: none; border: 1px solid var(--border); color: var(--text-muted);
+    font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 500;
+    padding: 7px 14px; border-radius: 8px; cursor: pointer; transition: all .2s;
+  }
+  .act-btn:hover, .act-btn.active { background: var(--indigo); color: white; border-color: var(--indigo); }
+  .act-btn.gold:hover, .act-btn.gold.active { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+
+  /* WELCOME */
+  .welcome-card {
+    background: linear-gradient(135deg, #0D1F38 0%, #1A1040 100%);
+    border: 1px solid var(--indigo); border-radius: 20px; padding: 40px;
+    text-align: center; max-width: 600px; margin: 0 auto;
+  }
+  .welcome-card h1 { font-size: 32px; font-weight: 700; margin-bottom: 12px;
+    background: linear-gradient(90deg, var(--indigo-light), var(--gold));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .welcome-card p { color: var(--text-muted); font-size: 15px; line-height: 1.6; margin-bottom: 24px; }
+  .stats-row { display: flex; justify-content: center; gap: 32px; margin: 24px 0; }
+  .stat { text-align: center; }
+  .stat-n { font-size: 28px; font-weight: 700; color: var(--indigo-light); }
+  .stat-l { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* GENERATE BTN */
+  .generate-btn {
+    background: linear-gradient(135deg, var(--indigo), #8B5CF6);
+    border: none; color: white; font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600; padding: 14px 28px; border-radius: 12px;
+    cursor: pointer; font-size: 15px; transition: all .2s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .generate-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(99,102,241,.3); }
+  .generate-btn:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+
+  /* EXAM TIMER */
+  .exam-timer {
+    background: var(--navy-card); border: 1px solid var(--gold);
+    border-radius: 10px; padding: 8px 20px; font-size: 20px;
+    font-family: 'JetBrains Mono', monospace; color: var(--gold);
+    font-weight: 500;
+  }
+
+  /* FORMULA TABLE */
+  .formula-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin: 12px 0; }
+  .formula-table td { padding: 10px 14px; background: rgba(99,102,241,.06); font-size: 14px; }
+  .formula-table td:first-child { border-radius: 8px 0 0 8px; color: var(--text-muted); width: 40%; }
+  .formula-table td:last-child { border-radius: 0 8px 8px 0; color: #CBD5E1; }
+
+  /* SUMMARY CHIP */
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(99,102,241,.12); border: 1px solid rgba(99,102,241,.3);
+    color: var(--indigo-light); font-size: 12px; font-weight: 600;
+    padding: 4px 12px; border-radius: 20px; margin: 4px 4px 4px 0;
+  }
+
+  @media(max-width:768px){
+    .sidebar{display:none;}
+    .props-grid{grid-template-columns:1fr;}
+    #learn-panel{padding:16px;}
+    .welcome-card{padding:24px;}
+    .stats-row{gap:16px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button class="menu-toggle" onclick="toggleSidebar()" id="menuToggle">☰</button>
+    <div class="logo">MatExame 12 <span>Exame Nacional · 12ª Classe</span></div>
+  </div>
+  <div class="header-right">
+    <div id="progress-bar-wrap" title="Tópicos estudados">
+      <div id="progress-bar"></div>
+    </div>
+    <button class="mode-btn active" onclick="setMode('learn')" id="btn-learn">📖 Aprender</button>
+    <button class="mode-btn" onclick="setMode('practice')" id="btn-practice">✏️ Praticar</button>
+    <button class="mode-btn" onclick="setMode('exam')" id="btn-exam">📝 Exame</button>
+    <button class="mode-btn" onclick="setMode('chat')" id="btn-chat">🤖 IA</button>
+  </div>
+</header>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="trimester-label">1º Trimestre</div>
+    <button class="topic-btn" onclick="loadTopic('pemdas')">PEMDAS — Operações Múltiplas</button>
+    <button class="topic-btn" onclick="loadTopic('potenciacao')">Potenciação</button>
+    <button class="topic-btn" onclick="loadTopic('artificios_potencia')">Artifícios de Potência</button>
+    <button class="topic-btn" onclick="loadTopic('funcoes_exp')">Funções Exponenciais</button>
+    <button class="topic-btn" onclick="loadTopic('equacoes_exp')">Equações Exponenciais</button>
+    <button class="topic-btn" onclick="loadTopic('inequacoes_exp')">Inequações Exponenciais</button>
+
+    <div class="trimester-label">2º Trimestre</div>
+    <button class="topic-btn" onclick="loadTopic('log_props')">Logaritmos — Propriedades</button>
+    <button class="topic-btn" onclick="loadTopic('log_operacoes')">Operações Logarítmicas</button>
+    <button class="topic-btn" onclick="loadTopic('mudanca_base')">Mudança de Base</button>
+    <button class="topic-btn" onclick="loadTopic('funcao_log')">Função Logarítmica</button>
+    <button class="topic-btn" onclick="loadTopic('equacoes_log')">Equações Logarítmicas</button>
+    <button class="topic-btn" onclick="loadTopic('tipos_eq_log')">Tipos de Equação Log</button>
+
+    <div class="trimester-label">3º Trimestre</div>
+    <button class="topic-btn" onclick="loadTopic('inequacoes_log')">Inequações Logarítmicas</button>
+    <button class="topic-btn" onclick="loadTopic('derivadas_intro')">Derivadas — Introdução</button>
+    <button class="topic-btn" onclick="loadTopic('regras_derivacao')">Regras de Derivação</button>
+    <button class="topic-btn" onclick="loadTopic('derivadas_trans')">Derivadas Transcendentes</button>
+    <button class="topic-btn" onclick="loadTopic('complexos')">Números Complexos</button>
+    <button class="topic-btn" onclick="loadTopic('estatistica')">Estatística</button>
+  </nav>
+
+  <!-- MAIN AREA -->
+  <main class="main">
+
+    <!-- LEARN PANEL -->
+    <div class="panel active" id="learn-panel">
+      <div class="welcome-card">
+        <h1>Pronto para o Exame? 🎯</h1>
+        <p>Sistema de estudo com IA integrada para a 12ª Classe. Escolhe um tópico à esquerda para começar a estudar com explicações, fórmulas e exemplos.</p>
+        <div class="stats-row">
+          <div class="stat"><div class="stat-n">18</div><div class="stat-l">Tópicos</div></div>
+          <div class="stat"><div class="stat-n">3</div><div class="stat-l">Trimestres</div></div>
+          <div class="stat"><div class="stat-n">∞</div><div class="stat-l">Exercícios IA</div></div>
+        </div>
+        <p style="font-size:13px; color: var(--text-muted);">
+          <span class="chip">📖 Aprender</span> Teoria + Exemplos
+          <span class="chip">✏️ Praticar</span> Exercícios IA
+          <span class="chip">📝 Exame</span> Simulação
+          <span class="chip">🤖 IA</span> Perguntas livres
+        </p>
+      </div>
+    </div>
+
+    <!-- PRACTICE PANEL -->
+    <div class="panel" id="practice-panel">
+      <div class="content-topbar">
+        <h3 id="practice-topic-name">Seleciona um tópico e clica em Praticar</h3>
+        <div class="action-btns">
+          <button class="act-btn" id="gen-practice-btn" onclick="generatePractice()">⚡ Gerar Exercícios</button>
+        </div>
+      </div>
+      <div style="padding:32px; flex:1; overflow-y:auto;" id="practice-content">
+        <div class="welcome-card" style="margin:0;">
+          <h1 style="font-size:22px">Praticar com IA</h1>
+          <p>Seleciona um tópico no menu lateral e clica em <strong>Gerar Exercícios</strong> para receberes exercícios gerados pela IA com correção automática.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXAM PANEL -->
+    <div class="panel" id="exam-panel">
+      <div class="content-topbar">
+        <div>
+          <h3>Simulação de Exame Nacional</h3>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:2px">Todos os tópicos · Tempo limitado</p>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div class="exam-timer" id="exam-timer">45:00</div>
+          <button class="act-btn gold" onclick="startExam()">▶ Iniciar Exame</button>
+        </div>
+      </div>
+      <div style="padding:32px;flex:1;overflow-y:auto;" id="exam-content">
+        <div class="welcome-card" style="margin:0;">
+          <h1 style="font-size:22px">Simulação de Exame 📝</h1>
+          <p>Recebe 10 perguntas aleatórias de todos os tópicos do programa. Tens <strong>45 minutos</strong>. A IA gera e corrige automaticamente.</p>
+          <button class="generate-btn" onclick="startExam()" style="margin-top:8px">▶ Começar Simulação</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAT PANEL -->
+    <div class="panel" id="chat-panel">
+      <div class="chat-header">
+        <h2>🤖 Professor IA — Matemática 12ª Classe</h2>
+        <p>Faz qualquer pergunta sobre os tópicos do teu programa. Explicações com fórmulas e exemplos.</p>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <div class="msg ai">
+          <div class="msg-bubble">Olá! Sou o teu professor IA de Matemática da 12ª Classe 📐<br><br>Podes perguntar-me qualquer coisa sobre: <strong>Exponenciais, Logaritmos, Derivadas, Números Complexos, Estatística</strong> e muito mais.<br><br>Exemplo: <em>"Explica-me como resolver uma equação logarítmica"</em> ou <em>"Como faço a mudança de base?"</em></div>
+          <span class="msg-time">Professor IA</span>
+        </div>
+      </div>
+      <div class="chat-input-wrap">
+        <textarea id="chat-input" placeholder="Faz uma pergunta sobre matemática..." rows="1" onkeydown="handleChatKey(event)"></textarea>
+        <button id="send-btn" onclick="sendChat()">➤</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ─── MOBILE SIDEBAR ──────────────────────────────────────
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  sidebar.classList.toggle('open');
+}
+document.addEventListener('click', function(e) {
+  const sidebar = document.querySelector('.sidebar');
+  const toggle = document.getElementById('menuToggle');
+  if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== toggle) {
+    sidebar.classList.remove('open');
+  }
+});
+
+// ─── STATE ───────────────────────────────────────────────
+let currentTopic = null;
+let currentMode = 'learn';
+let examTimer = null;
+let examSeconds = 2700;
+let examQuestions = [];
+let examCurrent = 0;
+let examScore = 0;
+let practiceQuestions = [];
+let practiceCurrent = 0;
+let practiceScore = 0;
+let studiedTopics = new Set(JSON.parse(localStorage.getItem('studied') || '[]'));
+
+// ─── TOPIC CONTENT ────────────────────────────────────────
+const TOPICS = {
+  pemdas: {
+    title: "PEMDAS — Operações Múltiplas",
+    subtitle: "Ordem correta das operações matemáticas",
+    trimester: 1,
+    content: `
+      <p class="explanation">
+        <strong>PEMDAS</strong> (ou PEDMAS) é o acrónimo que define a ordem em que as operações matemáticas devem ser efetuadas numa expressão. Sem esta regra, uma mesma expressão poderia ter múltiplos resultados.
+      </p>
+      <div class="formula-box">
+        <strong style="color:var(--gold);font-size:13px;letter-spacing:2px;">P · E · M/D · A/S</strong><br><br>
+        <span style="color:#94A3B8;font-size:14px;">
+          <strong style="color:#F0F4FF">P</strong>arênteses → <strong style="color:#F0F4FF">E</strong>xponentes → <strong style="color:#F0F4FF">M</strong>ultiplicação/<strong style="color:#F0F4FF">D</strong>ivisão → <strong style="color:#F0F4FF">A</strong>dição/<strong style="color:#F0F4FF">S</strong>ubtração
+        </span>
+      </div>
+      <div class="section-heading">Exemplo Resolvido</div>
+      <div class="example-box">
+        <div class="example-label">Exemplo 1</div>
+        <div class="step">Calcular: <strong>2 + 3 × (4² − 6) ÷ 2</strong></div>
+        <div class="step">→ Parênteses: 4² − 6 = 16 − 6 = <strong>10</strong></div>
+        <div class="step">→ Expressão: 2 + 3 × 10 ÷ 2</div>
+        <div class="step">→ Multiplicação/Divisão (da esq. p/ dir.): 3 × 10 = 30; 30 ÷ 2 = <strong>15</strong></div>
+        <div class="step">→ Adição: 2 + 15 = <strong style="color:var(--gold-light)">17 ✓</strong></div>
+      </div>
+      <div class="note-box"><strong>⚠ Atenção:</strong> Multiplicação e Divisão têm a <em>mesma prioridade</em> — resolve da esquerda para a direita. O mesmo para Adição e Subtração.</div>
+    `
+  },
+  potenciacao: {
+    title: "Potenciação",
+    subtitle: "Propriedades e operações com potências",
+    trimester: 1,
+    content: `
+      <p class="explanation">A potenciação é a operação matemática que representa a multiplicação repetida de um número por si mesmo. Se \\(a\\) é a base e \\(n\\) o expoente:</p>
+      <div class="formula-box">\\[ a^n = \\underbrace{a \\times a \\times \\cdots \\times a}_{n \\text{ vezes}} \\]</div>
+      <div class="section-heading">Propriedades Fundamentais</div>
+      <div class="props-grid">
+        <div class="prop-card"><div class="prop-name">Produto de potências</div>\\[a^m \\cdot a^n = a^{m+n}\\]</div>
+        <div class="prop-card"><div class="prop-name">Quociente de potências</div>\\[\\dfrac{a^m}{a^n} = a^{m-n}\\]</div>
+        <div class="prop-card"><div class="prop-name">Potência de potência</div>\\[(a^m)^n = a^{m \\cdot n}\\]</div>
+        <div class="prop-card"><div class="prop-name">Potência de produto</div>\\[(a \\cdot b)^n = a^n \\cdot b^n\\]</div>
+        <div class="prop-card"><div class="prop-name">Expoente zero</div>\\[a^0 = 1 \\quad (a \\neq 0)\\]</div>
+        <div class="prop-card"><div class="prop-name">Expoente negativo</div>\\[a^{-n} = \\dfrac{1}{a^n}\\]</div>
+      </div>
+      <div class="section-heading">Exemplo Resolvido</div>
+      <div class="example-box">
+        <div class="example-label">Simplificar</div>
+        <div class="step">\\(\\dfrac{2^5 \\cdot 2^{-3}}{(2^2)^2}\\)</div>
+        <div class="step">→ Numerador: \\(2^5 \\cdot 2^{-3} = 2^{5+(-3)} = 2^2\\)</div>
+        <div class="step">→ Denominador: \\((2^2)^2 = 2^{2 \\cdot 2} = 2^4\\)</div>
+        <div class="step">→ Resultado: \\(\\dfrac{2^2}{2^4} = 2^{2-4} = 2^{-2} = \\dfrac{1}{4}\\)</div>
+        <div class="step" style="color:var(--gold-light)">Resposta: \\(\\dfrac{1}{4}\\) ✓</div>
+      </div>
+    `
+  },
+  artificios_potencia: {
+    title: "Artifícios de Potência",
+    subtitle: "Técnicas para simplificação e cálculo de potências",
+    trimester: 1,
+    content: `
+      <p class="explanation">Os artifícios de potência são técnicas que facilitam o cálculo e a simplificação de expressões com expoentes, especialmente em equações.</p>
+      <div class="section-heading">Técnica 1 — Fatorização da Base</div>
+      <div class="formula-box">\\[ a^n = (a^k)^{n/k} \\quad \\text{escolhe } k \\text{ para simplificar} \\]</div>
+      <div class="example-box">
+        <div class="example-label">Exemplo</div>
+        <div class="step">Simplificar \\(8^x = 2^{12}\\)</div>
+        <div class="step">→ Escrever \\(8 = 2^3\\), então \\((2^3)^x = 2^{12}\\)</div>
+        <div class="step">→ \\(2^{3x} = 2^{12}\\) → <strong>\\(x = 4\\)</strong> ✓</div>
+      </div>
+      <div class="section-heading">Técnica 2 — Igualar Bases</div>
+      <div class="formula-box">\\[ a^{f(x)} = a^{g(x)} \\implies f(x) = g(x) \\]</div>
+      <div class="note-box"><strong>⚠ Regra:</strong> Só se pode igualar expoentes quando as bases são iguais e diferentes de 0 e 1.</div>
+      <div class="section-heading">Técnica 3 — Substituição</div>
+      <div class="example-box">
+        <div class="example-label">Equação com substituição</div>
+        <div class="step">\\(4^x - 3 \\cdot 2^x - 4 = 0\\)</div>
+        <div class="step">→ Nota que \\(4^x = (2^2)^x = (2^x)^2\\)</div>
+        <div class="step">→ Faz \\(t = 2^x\\): \\(t^2 - 3t - 4 = 0\\)</div>
+        <div class="step">→ \\((t-4)(t+1)=0\\) → \\(t=4\\) (pois \\(t>0\\))</div>
+        <div class="step">→ \\(2^x = 4 = 2^2\\) → <strong>\\(x = 2\\)</strong> ✓</div>
+      </div>
+    `
+  },
+  funcoes_exp: {
+    title: "Funções Exponenciais",
+    subtitle: "Definição, gráfico e propriedades",
+    trimester: 1,
+    content: `
+      <p class="explanation">Uma função exponencial é da forma \\(f(x) = a^x\\) onde \\(a > 0\\) e \\(a \\neq 1\\). A variável é o expoente — é isso que a distingue das funções polinomiais.</p>
+      <div class="formula-box">\\[ f(x) = a^x, \\quad a > 0, \\ a \\neq 1 \\]</div>
+      <div class="section-heading">Propriedades do Gráfico</div>
+      <table class="formula-table">
+        <tr><td>Domínio</td><td>\\(\\mathbb{R}\\) (todos os reais)</td></tr>
+        <tr><td>Contradomínio</td><td>\\(\\mathbb{R}^+\\) (positivos, nunca zero)</td></tr>
+        <tr><td>Assíntota horizontal</td><td>\\(y = 0\\) (eixo dos \\(x\\))</td></tr>
+        <tr><td>Ponto fixo</td><td>\\((0, 1)\\) sempre passa por aqui</td></tr>
+        <tr><td>Se \\(a > 1\\)</td><td>Função crescente ↗</td></tr>
+        <tr><td>Se \\(0 < a < 1\\)</td><td>Função decrescente ↘</td></tr>
+      </table>
+      <div class="section-heading">A Base Natural</div>
+      <div class="formula-box">\\[ f(x) = e^x, \\quad e \\approx 2{,}718... \\]</div>
+      <p class="explanation">O número de Euler \\(e\\) é a base natural. Muito usado em crescimento contínuo e derivadas.</p>
+    `
+  },
+  equacoes_exp: {
+    title: "Equações Exponenciais",
+    subtitle: "Resolução de equações com expoentes",
+    trimester: 1,
+    content: `
+      <p class="explanation">Uma equação exponencial tem a incógnita no expoente. Os dois métodos principais de resolução são: <strong>igualar bases</strong> e <strong>aplicar logaritmos</strong>.</p>
+      <div class="section-heading">Método 1 — Igualar Bases</div>
+      <div class="formula-box">\\[ a^{f(x)} = a^{g(x)} \\iff f(x) = g(x) \\]</div>
+      <div class="example-box">
+        <div class="example-label">Exemplo</div>
+        <div class="step">\\(3^{2x-1} = 27\\)</div>
+        <div class="step">→ \\(27 = 3^3\\), então \\(3^{2x-1} = 3^3\\)</div>
+        <div class="step">→ \\(2x - 1 = 3\\) → \\(2x = 4\\) → <strong>\\(x = 2\\)</strong> ✓</div>
+      </div>
+      <div class="section-heading">Método 2 — Aplicar Logaritmos</div>
+      <div class="formula-box">\\[ a^x = b \\iff x = \\log_a b \\]</div>
+      <div class="example-box">
+        <div class="example-label">Exemplo</div>
+        <div class="step">\\(2^x = 10\\)</div>
+        <div class="step">→ \\(\\log 2^x = \\log 10\\)</div>
+        <div class="step">→ \\(x \\cdot \\log 2 = 1\\)</div>
+        <div class="step">→ \\(x = \\dfrac{1}{\\log 2} \\approx \\dfrac{1}{0{,}301} \\approx\\) <strong>\\(3{,}32\\)</strong> ✓</div>
+      </div>
+    `
+  },
+  inequacoes_exp: {
+    title: "Inequações Exponenciais",
+    subtitle: "Resolução de inequações com base exponencial",
+    trimester: 1,
+    content: `
+      <p class="explanation">Numa inequação exponencial, o sentido da desigualdade depende da base \\(a\\). Este é o aspeto mais importante!</p>
+      <div class="formula-box">
+        \\[ a^{f(x)} > a^{g(x)} \\]
+      </div>
+      <div class="props-grid">
+        <div class="prop-card"><div class="prop-name">Se a &gt; 1 (crescente)</div>\\[a^{f(x)} > a^{g(x)} \\iff f(x) > g(x)\\]<p style="font-size:12px;color:var(--text-muted);margin-top:8px">O sinal mantém-se</p></div>
+        <div class="prop-card"><div class="prop-name">Se 0 &lt; a &lt; 1 (decrescente)</div>\\[a^{f(x)} > a^{g(x)} \\iff f(x) < g(x)\\]<p style="font-size:12px;color:var(--text-muted);margin-top:8px">O sinal inverte!</p></div>
+      </div>
+      <div class="example-box">
+        <div class="example-label">Exemplo com a &gt; 1</div>
+        <div class="step">\\(2^{x+1} > 8\\)</div>
+        <div class="step">→ \\(8 = 2^3\\), então \\(2^{x+1} > 2^3\\)</div>
+        <div class="step">→ Base \\(2 > 1\\): sinal mantém → \\(x+1 > 3\\)</div>
+        <div class="step">→ <strong>\\(x > 2\\)</strong>, ou seja, \\(x \\in ]2, +\\infty[\\) ✓</div>
+      </div>
+      <div class="note-box"><strong>⚠ CUIDADO:</strong> Com base entre 0 e 1, o sinal INVERTE. Esta é a pergunta favorita dos exames!</div>
+    `
+  },
+  log_props: {
+    title: "Logaritmos — Propriedades",
+    subtitle: "Definição e propriedades fundamentais",
+    trimester: 2,
+    content: `
+      <p class="explanation">O logaritmo é o expoente a que se eleva a base para obter o argumento. É a operação inversa da exponenciação.</p>
+      <div class="formula-box">\\[ \\log_a b = x \\iff a^x = b \\quad (a>0, a \\neq 1, b > 0) \\]</div>
+      <div class="section-heading">Propriedades Operatórias</div>
+      <div class="props-grid">
+        <div class="prop-card"><div class="prop-name">Produto</div>\\[\\log_a(m \\cdot n) = \\log_a m + \\log_a n\\]</div>
+        <div class="prop-card"><div class="prop-name">Quociente</div>\\[\\log_a\\!\\left(\\dfrac{m}{n}\\right) = \\log_a m - \\log_a n\\]</div>
+        <div class="prop-card"><div class="prop-name">Potência</div>\\[\\log_a(m^k) = k \\cdot \\log_a m\\]</div>
+        <div class="prop-card"><div class="prop-name">Log da base</div>\\[\\log_a a = 1\\]</div>
+        <div class="prop-card"><div class="prop-name">Log de 1</div>\\[\\log_a 1 = 0\\]</div>
+        <div class="prop-card"><div class="prop-name">Log decimal</div>\\[\\log_{10} x = \\log x\\]</div>
+      </div>
+      <div class="section-heading">Propriedades por Definição</div>
+      <div class="formula-box">\\[ a^{\\log_a x} = x \\qquad \\log_a(a^x) = x \\]</div>
+      <div class="note-box"><strong>Domínio:</strong> O argumento do logaritmo tem de ser <strong>estritamente positivo</strong>: \\(\\log_a(f(x))\\) só existe se \\(f(x) > 0\\).</div>
+    `
+  },
+  log_operacoes: {
+    title: "Operações Logarítmicas",
+    subtitle: "Calcular e simplificar expressões com logaritmos",
+    trimester: 2,
+    content: `
+      <p class="explanation">As propriedades dos logaritmos permitem transformar expressões complexas em operações mais simples. Treina a aplicação de cada propriedade.</p>
+      <div class="section-heading">Exemplos de Simplificação</div>
+      <div class="example-box">
+        <div class="example-label">Expandir</div>
+        <div class="step">\\(\\log\\!\\left(\\dfrac{x^2 \\sqrt{y}}{z^3}\\right)\\)</div>
+        <div class="step">→ \\(= \\log x^2 + \\log y^{1/2} - \\log z^3\\)</div>
+        <div class="step">→ \\(= 2\\log x + \\tfrac{1}{2}\\log y - 3\\log z\\) ✓</div>
+      </div>
+      <div class="example-box">
+        <div class="example-label">Condensar</div>
+        <div class="step">\\(3\\log 2 + \\log 5 - \\log 4\\)</div>
+        <div class="step">→ \\(= \\log 2^3 + \\log 5 - \\log 4 = \\log\\!\\left(\\dfrac{8 \\cdot 5}{4}\\right)\\)</div>
+        <div class="step">→ \\(= \\log 10 = \\)<strong>\\(1\\)</strong> ✓</div>
+      </div>
+      <div class="example-box">
+        <div class="example-label">Cálculo direto</div>
+        <div class="step">\\(\\log_3 81 = \\log_3 3^4 = \\)<strong>\\(4\\)</strong> ✓</div>
+        <div class="step">\\(\\log_2 \\dfrac{1}{8} = \\log_2 2^{-3} = \\)<strong>\\(-3\\)</strong> ✓</div>
+      </div>
+    `
+  },
+  mudanca_base: {
+    title: "Mudança de Base",
+    subtitle: "Converter logaritmos entre diferentes bases",
+    trimester: 2,
+    content: `
+      <p class="explanation">A fórmula de mudança de base permite calcular qualquer logaritmo usando apenas logaritmos decimais (ou naturais), que estão nas calculadoras.</p>
+      <div class="formula-box">\\[ \\log_a b = \\dfrac{\\log_c b}{\\log_c a} = \\dfrac{\\ln b}{\\ln a} = \\dfrac{\\log b}{\\log a} \\]</div>
+      <div class="section-heading">Caso mais comum: base 10</div>
+      <div class="formula-box">\\[ \\log_a b = \\dfrac{\\log b}{\\log a} \\]</div>
+      <div class="example-box">
+        <div class="example-label">Calcular \\(\\log_5 17\\)</div>
+        <div class="step">→ \\(\\log_5 17 = \\dfrac{\\log 17}{\\log 5} = \\dfrac{1{,}230}{0{,}699} \\approx\\) <strong>\\(1{,}76\\)</strong> ✓</div>
+      </div>
+      <div class="section-heading">Propriedades da Mudança de Base</div>
+      <div class="props-grid">
+        <div class="prop-card"><div class="prop-name">Inverso</div>\\[\\log_a b = \\dfrac{1}{\\log_b a}\\]</div>
+        <div class="prop-card"><div class="prop-name">Produto de logs</div>\\[\\log_a b \\cdot \\log_b c = \\log_a c\\]</div>
+      </div>
+      <div class="example-box">
+        <div class="example-label">Inequação com mudança de base</div>
+        <div class="step">\\(\\log_3 x > \\log_9 x\\)</div>
+        <div class="step">→ \\(\\log_9 x = \\dfrac{\\log_3 x}{\\log_3 9} = \\dfrac{\\log_3 x}{2}\\)</div>
+        <div class="step">→ \\(\\log_3 x > \\dfrac{\\log_3 x}{2}\\) → \\(\\tfrac{1}{2}\\log_3 x > 0\\) → \\(\\log_3 x > 0\\) → <strong>\\(x > 1\\)</strong> ✓</div>
+      </div>
+    `
+  },
+  funcao_log: {
+    title: "Função Logarítmica",
+    subtitle: "Gráfico, domínio e propriedades da função logarítmica",
+    trimester: 2,
+    content: `
+      <p class="explanation">A função logarítmica \\(f(x) = \\log_a x\\) é a <strong>inversa</strong> da função exponencial \\(g(x) = a^x\\). Os seus gráficos são simétricos em relação à bissectriz \\(y = x\\).</p>
+      <div class="formula-box">\\[ f(x) = \\log_a x, \\quad a > 0, \\ a \\neq 1 \\]</div>
+      <table class="formula-table">
+        <tr><td>Domínio</td><td>\\(\\mathbb{R}^+ = ]0, +\\infty[\\)</td></tr>
+        <tr><td>Contradomínio</td><td>\\(\\mathbb{R}\\)</td></tr>
+        <tr><td>Assíntota vertical</td><td>\\(x = 0\\) (eixo dos \\(y\\))</td></tr>
+        <tr><td>Ponto fixo</td><td>\\((1, 0)\\) sempre (pois \\(\\log_a 1 = 0\\))</td></tr>
+        <tr><td>Se \\(a > 1\\)</td><td>Crescente ↗</td></tr>
+        <tr><td>Se \\(0 < a < 1\\)</td><td>Decrescente ↘</td></tr>
+      </table>
+      <div class="note-box"><strong>📌 Ponto-chave para exames:</strong> O domínio da função logarítmica é sempre \\(x > 0\\). Se a expressão no argumento contiver uma variável, resolve \\(f(x) > 0\\) para encontrar o domínio.</div>
+    `
+  },
+  equacoes_log: {
+    title: "Equações Logarítmicas",
+    subtitle: "Resolução de equações com logaritmos",
+    trimester: 2,
+    content: `
+      <p class="explanation">Numa equação logarítmica, a incógnita aparece no argumento do logaritmo. O método principal é transformar o logaritmo em forma exponencial.</p>
+      <div class="section-heading">Método — Definição do Log</div>
+      <div class="formula-box">\\[ \\log_a f(x) = k \\iff f(x) = a^k \\]</div>
+      <div class="example-box">
+        <div class="example-label">Exemplo 1 — Direto</div>
+        <div class="step">\\(\\log_2(x-1) = 3\\)</div>
+        <div class="step">→ \\(x - 1 = 2^3 = 8\\) → <strong>\\(x = 9\\)</strong></div>
+        <div class="step">Verificação: \\(x - 1 = 8 > 0\\) ✓ (domínio ok)</div>
+      </div>
+      <div class="section-heading">Equação com Logaritmos nos 2 Membros</div>
+      <div class="formula-box">\\[ \\log_a f(x) = \\log_a g(x) \\iff f(x) = g(x) \\quad (\\text{com } f,g > 0) \\]</div>
+      <div class="example-box">
+        <div class="example-label">Exemplo 2</div>
+        <div class="step">\\(\\log(x+3) + \\log(x-1) = \\log 5\\)</div>
+        <div class="step">→ \\(\\log[(x+3)(x-1)] = \\log 5\\)</div>
+        <div class="step">→ \\((x+3)(x-1) = 5\\)</div>
+        <div class="step">→ \\(x^2 + 2x - 3 = 5\\) → \\(x^2 + 2x - 8 = 0\\)</div>
+        <div class="step">→ \\((x+4)(x-2)=0\\) → \\(x=-4\\) ou \\(x=2\\)</div>
+        <div class="step">→ Verificar domínio: \\(x+3>0\\) e \\(x-1>0\\) → \\(x>1\\)</div>
+        <div class="step">→ \\(x = -4\\) rejeitado. <strong>\\(x = 2\\)</strong> ✓</div>
+      </div>
+      <div class="note-box"><strong>⚠ SEMPRE verificar:</strong> Após resolver, substituir na equação original para confirmar que os argumentos são positivos!</div>
+    `
+  },
+  tipos_eq_log: {
+    title: "Tipos de Equação Logarítmica",
+    subtitle: "Classificação e abordagem de cada tipo",
+    trimester: 2,
+    content: `
+      <p class="explanation">As equações logarítmicas organizam-se em tipos consoante a estrutura. Identificar o tipo ajuda a escolher o método de resolução mais eficiente.</p>
+      <div class="section-heading">Tipo 1 — Log = Constante</div>
+      <div class="formula-box">\\[\\log_a f(x) = k \\implies f(x) = a^k\\]</div>
+      <div class="section-heading">Tipo 2 — Log = Log (mesma base)</div>
+      <div class="formula-box">\\[\\log_a f(x) = \\log_a g(x) \\implies f(x) = g(x)\\]</div>
+      <div class="section-heading">Tipo 3 — Equação redutível a quadrática</div>
+      <div class="example-box">
+        <div class="example-label">Exemplo — Substituição t = log x</div>
+        <div class="step">\\((\\log x)^2 - 3\\log x + 2 = 0\\)</div>
+        <div class="step">→ Seja \\(t = \\log x\\): \\(t^2 - 3t + 2 = 0\\)</div>
+        <div class="step">→ \\((t-1)(t-2) = 0\\) → \\(t=1\\) ou \\(t=2\\)</div>
+        <div class="step">→ \\(\\log x = 1 \\Rightarrow x = 10\\) &nbsp;&nbsp; \\(\\log x = 2 \\Rightarrow x = 100\\) ✓</div>
+      </div>
+      <div class="section-heading">Tipo 4 — Log misto com exponencial</div>
+      <div class="example-box">
+        <div class="example-label">Usar log para resolver</div>
+        <div class="step">\\(2^x = 7\\)</div>
+        <div class="step">→ \\(x = \\log_2 7 = \\dfrac{\\log 7}{\\log 2} \\approx\\) <strong>2,807</strong> ✓</div>
+      </div>
+    `
+  },
+  inequacoes_log: {
+    title: "Inequações Logarítmicas",
+    subtitle: "Os dois tipos e mudança de base em inequações",
+    trimester: 3,
+    content: `
+      <p class="explanation">Como nas exponenciais, o sentido da desigualdade depende da base do logaritmo.</p>
+      <div class="props-grid">
+        <div class="prop-card"><div class="prop-name">Base a &gt; 1 (crescente)</div>\\[\\log_a f(x) > \\log_a g(x) \\iff f(x) > g(x)\\]<p style="font-size:12px;color:var(--text-muted);margin-top:8px">Sinal mantém-se</p></div>
+        <div class="prop-card"><div class="prop-name">Base 0 &lt; a &lt; 1 (decrescente)</div>\\[\\log_a f(x) > \\log_a g(x) \\iff f(x) < g(x)\\]<p style="font-size:12px;color:var(--text-muted);margin-top:8px">Sinal inverte!</p></div>
+      </div>
+      <div class="section-heading">Tipo 1 — Log &gt; Log (mesma base)</div>
+      <div class="example-box">
+        <div class="example-label">Exemplo</div>
+        <div class="step">\\(\\log_3(2x-1) > \\log_3(x+4)\\)</div>
+        <div class="step">→ Base 3 &gt; 1: sinal mantém → \\(2x-1 > x+4\\) → <strong>\\(x > 5\\)</strong></div>
+        <div class="step">→ Domínio: \\(2x-1>0\\) e \\(x+4>0\\) → \\(x > \\tfrac{1}{2}\\)</div>
+        <div class="step">→ Solução: \\(x \\in ]5, +\\infty[\\) ✓</div>
+      </div>
+      <div class="section-heading">Tipo 2 — Log &gt; Constante</div>
+      <div class="example-box">
+        <div class="example-label">Exemplo</div>
+        <div class="step">\\(\\log_2(x-3) \\geq 2\\)</div>
+        <div class="step">→ \\(x-3 \\geq 2^2 = 4\\) (base 2 &gt; 1) → <strong>\\(x \\geq 7\\)</strong></div>
+        <div class="step">→ Domínio: \\(x-3>0\\) → \\(x>3\\) (já satisfeito)</div>
+        <div class="step">→ Solução: \\(x \\in [7, +\\infty[\\) ✓</div>
+      </div>
+      <div class="note-box"><strong>📌 Inequação com mudança de base:</strong> Converte ambos os logs para a mesma base antes de comparar!</div>
+    `
+  },
+  derivadas_intro: {
+    title: "Derivadas — Introdução",
+    subtitle: "Coeficiente angular da recta tangente",
+    trimester: 3,
+    content: `
+      <p class="explanation">A derivada de uma função num ponto mede a <strong>taxa de variação instantânea</strong> — geometricamente, é o declive (coeficiente angular) da recta tangente ao gráfico nesse ponto.</p>
+      <div class="formula-box">\\[ f'(x) = \\lim_{h \\to 0} \\dfrac{f(x+h) - f(x)}{h} \\]</div>
+      <div class="section-heading">Significado Geométrico</div>
+      <p class="explanation" style="margin-bottom:12px">A recta tangente ao gráfico de \\(f\\) no ponto \\((a, f(a))\\) tem equação:</p>
+      <div class="formula-box">\\[ y - f(a) = f'(a) \\cdot (x - a) \\]</div>
+      <div class="example-box">
+        <div class="example-label">Exemplo — Recta tangente</div>
+        <div class="step">\\(f(x) = x^2\\) no ponto \\(x = 2\\)</div>
+        <div class="step">→ \\(f'(x) = 2x\\) → \\(f'(2) = 4\\) (declive)</div>
+        <div class="step">→ \\(f(2) = 4\\)</div>
+        <div class="step">→ Tangente: \\(y - 4 = 4(x-2)\\) → <strong>\\(y = 4x - 4\\)</strong> ✓</div>
+      </div>
+      <div class="note-box"><strong>📌 Recta normal:</strong> Perpendicular à tangente, tem declive \\(-\\dfrac{1}{f'(a)}\\).</div>
+    `
+  },
+  regras_derivacao: {
+    title: "Regras de Derivação",
+    subtitle: "Todas as regras para derivar funções",
+    trimester: 3,
+    content: `
+      <div class="section-heading">Derivadas Elementares</div>
+      <table class="formula-table">
+        <tr><td>\\(f(x) = k\\) (constante)</td><td>\\(f'(x) = 0\\)</td></tr>
+        <tr><td>\\(f(x) = x^n\\)</td><td>\\(f'(x) = n \\cdot x^{n-1}\\)</td></tr>
+        <tr><td>\\(f(x) = \\sqrt{x}\\)</td><td>\\(f'(x) = \\dfrac{1}{2\\sqrt{x}}\\)</td></tr>
+        <tr><td>\\(f(x) = e^x\\)</td><td>\\(f'(x) = e^x\\)</td></tr>
+        <tr><td>\\(f(x) = \\ln x\\)</td><td>\\(f'(x) = \\dfrac{1}{x}\\)</td></tr>
+      </table>
+      <div class="section-heading">Regras de Combinação</div>
+      <div class="props-grid">
+        <div class="prop-card"><div class="prop-name">Soma/Diferença</div>\\[(f \\pm g)' = f' \\pm g'\\]</div>
+        <div class="prop-card"><div class="prop-name">Produto</div>\\[(f \\cdot g)' = f'g + fg'\\]</div>
+        <div class="prop-card"><div class="prop-name">Quociente</div>\\[\\left(\\dfrac{f}{g}\\right)' = \\dfrac{f'g - fg'}{g^2}\\]</div>
+        <div class="prop-card"><div class="prop-name">Composta (regra da cadeia)</div>\\[[f(g(x))]' = f'(g(x)) \\cdot g'(x)\\]</div>
+      </div>
+      <div class="example-box">
+        <div class="example-label">Regra do produto</div>
+        <div class="step">\\(h(x) = x^2 \\cdot e^x\\)</div>
+        <div class="step">→ \\(h'(x) = 2x \\cdot e^x + x^2 \\cdot e^x = e^x(2x + x^2)\\) ✓</div>
+      </div>
+      <div class="example-box">
+        <div class="example-label">Regra da cadeia</div>
+        <div class="step">\\(h(x) = (3x^2 + 1)^5\\)</div>
+        <div class="step">→ \\(h'(x) = 5(3x^2+1)^4 \\cdot 6x = 30x(3x^2+1)^4\\) ✓</div>
+      </div>
+    `
+  },
+  derivadas_trans: {
+    title: "Derivadas Transcendentes",
+    subtitle: "Derivadas de funções exponenciais e logarítmicas",
+    trimester: 3,
+    content: `
+      <div class="section-heading">Funções Exponenciais</div>
+      <div class="props-grid">
+        <div class="prop-card"><div class="prop-name">Base e</div>\\[(e^x)' = e^x\\]</div>
+        <div class="prop-card"><div class="prop-name">Base e (composta)</div>\\[(e^{f(x)})' = e^{f(x)} \\cdot f'(x)\\]</div>
+        <div class="prop-card"><div class="prop-name">Base a</div>\\[(a^x)' = a^x \\ln a\\]</div>
+        <div class="prop-card"><div class="prop-name">Base a (composta)</div>\\[(a^{f(x)})' = a^{f(x)} \\cdot \\ln a \\cdot f'(x)\\]</div>
+      </div>
+      <div class="section-heading">Funções Logarítmicas</div>
+      <div class="props-grid">
+        <div class="prop-card"><div class="prop-name">Logaritmo natural</div>\\[(\\ln x)' = \\dfrac{1}{x}\\]</div>
+        <div class="prop-card"><div class="prop-name">Log natural (composto)</div>\\[(\\ln f(x))' = \\dfrac{f'(x)}{f(x)}\\]</div>
+        <div class="prop-card"><div class="prop-name">Log base a</div>\\[(\\log_a x)' = \\dfrac{1}{x \\ln a}\\]</div>
+        <div class="prop-card"><div class="prop-name">Log base 10</div>\\[(\\log x)' = \\dfrac{1}{x \\ln 10}\\]</div>
+      </div>
+      <div class="example-box">
+        <div class="example-label">Exemplos</div>
+        <div class="step">\\((e^{3x^2})' = e^{3x^2} \\cdot 6x\\) ✓</div>
+        <div class="step">\\((\\ln(x^2+1))' = \\dfrac{2x}{x^2+1}\\) ✓</div>
+        <div class="step">\\((2^x)' = 2^x \\ln 2\\) ✓</div>
+      </div>
+    `
+  },
+  complexos: {
+    title: "Números Complexos",
+    subtitle: "Unidade imaginária e forma algébrica",
+    trimester: 3,
+    content: `
+      <p class="explanation">Os números complexos surgem para resolver equações como \\(x^2 = -1\\), que não têm solução real. Define-se a <strong>unidade imaginária</strong>:</p>
+      <div class="formula-box">\\[ i = \\sqrt{-1} \\quad \\Longrightarrow \\quad i^2 = -1 \\]</div>
+      <div class="section-heading">Forma Algébrica</div>
+      <div class="formula-box">\\[ z = a + bi \\quad \\text{onde } a, b \\in \\mathbb{R} \\]</div>
+      <p class="explanation" style="margin:12px 0">\\(a = \\text{Re}(z)\\) — parte real &nbsp;|&nbsp; \\(b = \\text{Im}(z)\\) — parte imaginária</p>
+      <div class="section-heading">Potências de i</div>
+      <div class="props-grid">
+        <div class="prop-card"><div class="prop-name">\\(i^1\\)</div>\\[i\\]</div>
+        <div class="prop-card"><div class="prop-name">\\(i^2\\)</div>\\[-1\\]</div>
+        <div class="prop-card"><div class="prop-name">\\(i^3\\)</div>\\[-i\\]</div>
+        <div class="prop-card"><div class="prop-name">\\(i^4\\)</div>\\[1\\]</div>
+      </div>
+      <div class="note-box"><strong>📌 Ciclo de 4:</strong> \\(i^n = i^{n \\bmod 4}\\). Para calcular \\(i^{37}\\): \\(37 = 4\\times9 + 1\\) → \\(i^{37} = i^1 = i\\)</div>
+      <div class="section-heading">Operações</div>
+      <div class="example-box">
+        <div class="example-label">Adição e Multiplicação</div>
+        <div class="step">\\((3+2i) + (1-4i) = (3+1) + (2-4)i = 4 - 2i\\)</div>
+        <div class="step">\\((2+i)(3-2i) = 6 - 4i + 3i - 2i^2 = 6 - i + 2 = 8 - i\\)</div>
+      </div>
+      <div class="section-heading">Conjugado e Módulo</div>
+      <div class="formula-box">\\[ \\bar{z} = a - bi \\qquad |z| = \\sqrt{a^2 + b^2} \\]</div>
+    `
+  },
+  estatistica: {
+    title: "Estatística — Medidas de Tendência Central",
+    subtitle: "Média, moda e mediana",
+    trimester: 3,
+    content: `
+      <p class="explanation">As medidas de tendência central descrevem o valor em torno do qual os dados se concentram. As três principais são a <strong>média</strong>, a <strong>moda</strong> e a <strong>mediana</strong>.</p>
+      <div class="section-heading">Média Aritmética</div>
+      <div class="formula-box">\\[ \\bar{x} = \\dfrac{\\displaystyle\\sum_{i=1}^{n} x_i}{n} = \\dfrac{x_1 + x_2 + \\cdots + x_n}{n} \\]</div>
+      <div class="section-heading">Média Ponderada (com frequências)</div>
+      <div class="formula-box">\\[ \\bar{x} = \\dfrac{\\displaystyle\\sum f_i \\cdot x_i}{\\displaystyle\\sum f_i} \\]</div>
+      <div class="section-heading">Moda</div>
+      <p class="explanation">O valor (ou valores) que ocorre com mais frequência. Uma distribuição pode ser <em>amodal</em>, <em>unimodal</em>, <em>bimodal</em>, etc.</p>
+      <div class="section-heading">Mediana</div>
+      <p class="explanation">O valor central quando os dados estão ordenados.</p>
+      <div class="props-grid">
+        <div class="prop-card"><div class="prop-name">n ímpar</div>\\[\\text{Md} = x_{\\frac{n+1}{2}}\\]</div>
+        <div class="prop-card"><div class="prop-name">n par</div>\\[\\text{Md} = \\dfrac{x_{\\frac{n}{2}} + x_{\\frac{n}{2}+1}}{2}\\]</div>
+      </div>
+      <div class="example-box">
+        <div class="example-label">Exemplo completo</div>
+        <div class="step">Dados: 4, 7, 2, 9, 4, 6, 4</div>
+        <div class="step">Ordenados: 2, 4, 4, <strong>4</strong>, 6, 7, 9 (n=7, ímpar)</div>
+        <div class="step">→ Média: \\(\\bar{x} = \\dfrac{36}{7} \\approx 5{,}14\\)</div>
+        <div class="step">→ Moda: <strong>4</strong> (aparece 3 vezes)</div>
+        <div class="step">→ Mediana: posição \\(\\frac{7+1}{2} = 4\\) → <strong>4</strong> ✓</div>
+      </div>
+    `
+  }
+};
+
+// ─── PRACTICE QUESTIONS GENERATOR ────────────────────────
+async function generatePractice() {
+  if (!currentTopic) {
+    alert('Seleciona um tópico no menu primeiro!');
+    return;
+  }
+  const topicData = TOPICS[currentTopic];
+  const btn = document.getElementById('gen-practice-btn');
+  const container = document.getElementById('practice-content');
+  btn.disabled = true; btn.textContent = '⏳ A gerar...';
+  container.innerHTML = `<div style="display:flex;align-items:center;gap:16px;padding:20px;">
+    <div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>
+    <span style="color:var(--text-muted);font-size:14px;">A IA está a gerar exercícios sobre ${topicData.title}...</span>
+  </div>`;
+  try {
+    const res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: `Gera 3 exercícios de matemática do 12º ano angolano sobre o tópico: "${topicData.title}".
+Responde APENAS em JSON válido, sem texto antes ou depois, sem \`\`\`json. Formato:
+{"questions":[{"q":"texto da pergunta (usa notação LaTeX com \\( \\) para fórmulas inline, ex: \\(x^2\\), \\(\\sqrt{x}\\), \\(\\log_2 x\\))","options":["A) ...","B) ...","C) ...","D) ..."],"correct":0,"explanation":"passo 1: ... passo 2: ... resultado: ..."}]}
+correct é o índice (0=A,1=B,2=C,3=D). Exercícios progressivos, com dificuldade crescente. USA SEMPRE LaTeX para fórmulas.` }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content.map(i => i.text||'').join('');
+    const clean = text.replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(clean);
+    practiceQuestions = parsed.questions;
+    practiceCurrent = 0; practiceScore = 0;
+    renderPracticeQuestion();
+    MathJax.typesetPromise([document.getElementById('practice-content')]).catch(()=>{});
+  } catch(e) {
+    container.innerHTML = `<div class="question-card"><p style="color:var(--rose)">Erro ao gerar exercícios. Verifica a ligação.</p><button class="restart-btn" onclick="generatePractice()">Tentar novamente</button></div>`;
+  }
+  btn.disabled = false; btn.textContent = '⚡ Gerar Exercícios';
+}
+
+function renderPracticeQuestion() {
+  const container = document.getElementById('practice-content');
+  if (practiceCurrent >= practiceQuestions.length) {
+    container.innerHTML = `<div class="score-card">
+      <div class="score-big">${practiceScore}/${practiceQuestions.length}</div>
+      <div class="score-label">Exercícios corretos</div>
+      <p style="color:var(--text-muted);margin-top:12px;font-size:14px">${practiceScore === practiceQuestions.length ? '🏆 Perfeito! Dominas este tópico!' : practiceScore >= practiceQuestions.length/2 ? '👍 Bom trabalho! Continua a praticar.' : '📚 Estuda mais este tópico e tenta novamente.'}</p>
+      <button class="restart-btn" onclick="generatePractice()">🔄 Novos Exercícios</button>
+    </div>`; return;
+  }
+  const q = practiceQuestions[practiceCurrent];
+  container.innerHTML = `<div class="question-card">
+    <div class="question-num">Exercício ${practiceCurrent+1} de ${practiceQuestions.length}</div>
+    <div class="question-text">${q.q}</div>
+    <div class="options-list" id="opts">
+      ${q.options.map((o,i)=>`<button class="option-btn" onclick="answerPractice(${i})" id="opt-${i}"><span class="opt-letter">${'ABCD'[i]}</span>${o.slice(3)}</button>`).join('')}
+    </div>
+    <div class="answer-reveal" id="reveal"><strong style="color:var(--emerald)">Solução:</strong><br>${q.explanation.split('\n').map(l=>`<div class="solution-step">${l}</div>`).join('')}</div>
+    <button class="next-btn" id="next-btn" onclick="nextPractice()">Próximo →</button>
+  </div>`;
+  MathJax.typesetPromise([container]).catch(()=>{});
+}
+
+function answerPractice(idx) {
+  const q = practiceQuestions[practiceCurrent];
+  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+  document.getElementById(`opt-${idx}`).classList.add(idx === q.correct ? 'correct' : 'wrong');
+  if (idx !== q.correct) document.getElementById(`opt-${q.correct}`).classList.add('correct');
+  if (idx === q.correct) practiceScore++;
+  document.getElementById('reveal').classList.add('show');
+  document.getElementById('next-btn').classList.add('show');
+  MathJax.typesetPromise([document.getElementById('reveal')]).catch(()=>{});
+}
+function nextPractice() { practiceCurrent++; renderPracticeQuestion(); }
+
+// ─── EXAM ──────────────────────────────────────────────────
+async function startExam() {
+  const container = document.getElementById('exam-content');
+  clearInterval(examTimer);
+  examSeconds = 2700; updateTimer();
+  examQuestions = []; examCurrent = 0; examScore = 0;
+  container.innerHTML = `<div style="display:flex;align-items:center;gap:16px;padding:20px;">
+    <div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>
+    <span style="color:var(--text-muted);font-size:14px;">A IA está a preparar o teu exame...</span>
+  </div>`;
+  const topics = Object.values(TOPICS).map(t=>t.title).slice(0,10).join(', ');
+  try {
+    const res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: `Gera 10 perguntas de simulação de exame nacional de Matemática 12ª classe angolana, cobrindo estes tópicos: ${topics}.
+Responde APENAS JSON válido, sem texto antes ou depois:
+{"questions":[{"q":"pergunta com LaTeX usando \\( \\) para fórmulas inline","options":["A) ...","B) ...","C) ...","D) ..."],"correct":0,"explanation":"solução curta com LaTeX"}]}
+correct é índice 0-3. Varia a dificuldade, inclui pelo menos 2 de logaritmos, 2 de derivadas, 2 de exponenciais. USA SEMPRE LaTeX para fórmulas.` }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content.map(i=>i.text||'').join('');
+    const parsed = JSON.parse(text.replace(/```json|```/g,'').trim());
+    examQuestions = parsed.questions;
+    examTimer = setInterval(()=>{ examSeconds--; updateTimer(); if(examSeconds<=0){clearInterval(examTimer);finishExam();} }, 1000);
+    renderExamQuestion();
+  } catch(e) {
+    container.innerHTML = `<div class="question-card"><p style="color:var(--rose)">Erro ao gerar exame. Tenta novamente.</p><button class="restart-btn" onclick="startExam()">Tentar novamente</button></div>`;
+  }
+}
+
+function updateTimer() {
+  const m = Math.floor(examSeconds/60), s = examSeconds%60;
+  const el = document.getElementById('exam-timer');
+  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.style.color = examSeconds < 300 ? 'var(--rose)' : 'var(--gold)';
+}
+
+function renderExamQuestion() {
+  const container = document.getElementById('exam-content');
+  if (examCurrent >= examQuestions.length) { finishExam(); return; }
+  const q = examQuestions[examCurrent];
+  container.innerHTML = `<div class="question-card">
+    <div class="question-num">Questão ${examCurrent+1} de ${examQuestions.length}</div>
+    <div class="question-text">${q.q}</div>
+    <div class="options-list">
+      ${q.options.map((o,i)=>`<button class="option-btn" onclick="answerExam(${i})" id="opt-${i}"><span class="opt-letter">${'ABCD'[i]}</span>${o.slice(3)}</button>`).join('')}
+    </div>
+    <div class="answer-reveal" id="reveal"><strong style="color:var(--emerald)">✓ Resposta:</strong> ${q.explanation}</div>
+    <button class="next-btn" id="next-btn" onclick="nextExamQ()">${examCurrent===examQuestions.length-1?'Ver Resultado ✓':'Próxima →'}</button>
+  </div>`;
+  MathJax.typesetPromise([container]).catch(()=>{});
+}
+
+function answerExam(idx) {
+  const q = examQuestions[examCurrent];
+  document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+  document.getElementById(`opt-${idx}`).classList.add(idx===q.correct?'correct':'wrong');
+  if (idx!==q.correct) document.getElementById(`opt-${q.correct}`).classList.add('correct');
+  if (idx===q.correct) examScore++;
+  document.getElementById('reveal').classList.add('show');
+  document.getElementById('next-btn').classList.add('show');
+}
+function nextExamQ() { examCurrent++; renderExamQuestion(); }
+
+function finishExam() {
+  clearInterval(examTimer);
+  const pct = Math.round(examScore/examQuestions.length*100)||0;
+  const grade = pct>=90?'🏆 Excelente':pct>=70?'✅ Bom':pct>=50?'📚 Suficiente':'❌ Precisa melhorar';
+  document.getElementById('exam-content').innerHTML = `<div class="score-card">
+    <div style="font-size:40px;margin-bottom:8px">${pct>=70?'🎓':'📖'}</div>
+    <div class="score-big">${examScore}/${examQuestions.length}</div>
+    <div class="score-label">${grade} · ${pct}%</div>
+    <p style="color:var(--text-muted);margin-top:16px;font-size:14px;max-width:400px;margin-left:auto;margin-right:auto;">
+      ${pct>=70?'Estás bem preparado para o exame! Continua a rever os tópicos onde erraste.':'Dedica mais tempo aos tópicos com dificuldade. Usa o modo Aprender e Praticar.'}
+    </p>
+    <button class="restart-btn" onclick="startExam()">🔄 Novo Exame</button>
+  </div>`;
+}
+
+// ─── DESMOS GRAPHS ─────────────────────────────────────────
+let desmosCalc = null;
+
+function renderGraph(expressions, description) {
+  // Remove gráfico anterior se existir
+  const old = document.getElementById('graph-msg');
+  if (old) old.remove();
+
+  const graphId = 'graph-msg';
+  const el = document.createElement('div');
+  el.className = 'msg ai';
+  el.id = graphId;
+  el.innerHTML = `
+    <div class="msg-bubble" style="padding:0;overflow:hidden;min-width:280px;width:100%;max-width:520px;">
+      <div class="graph-container" style="margin:0;border-radius:0;">
+        <div class="graph-label">📈 Gráfico Interactivo</div>
+        <div id="desmos-calc"></div>
+        <div class="graph-desc">${description}</div>
+      </div>
+    </div>
+    <span class="msg-time">Professor IA · Gráfico</span>
+  `;
+  document.getElementById('chat-messages').appendChild(el);
+  el.scrollIntoView({behavior:'smooth'});
+
+  setTimeout(() => {
+    const calcEl = document.getElementById('desmos-calc');
+    if (!calcEl) return;
+    if (desmosCalc) desmosCalc.destroy();
+    desmosCalc = Desmos.GraphingCalculator(calcEl, {
+      expressions: true,
+      settingsMenu: false,
+      zoomButtons: true,
+      border: false,
+      backgroundColor: '#111F36',
+      textColor: '#F0F4FF',
+    });
+    expressions.forEach((expr, i) => {
+      desmosCalc.setExpression({ id: 'g'+i, latex: expr.latex, color: expr.color || '#818CF8' });
+    });
+  }, 100);
+}
+
+function parseGraphFromResponse(reply) {
+  // Detecta bloco JSON de gráfico na resposta: [GRAPH]...[/GRAPH]
+  const match = reply.match(/\[GRAPH\]([\s\S]*?)\[\/GRAPH\]/);
+  if (!match) return null;
+  try {
+    return JSON.parse(match[1].trim());
+  } catch(e) { return null; }
+}
+
+// ─── CHAT ──────────────────────────────────────────────────
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim(); if (!msg) return;
+  const btn = document.getElementById('send-btn');
+  input.value = ''; btn.disabled = true;
+  addMsg('user', msg);
+  const loadId = addMsg('ai', '<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>');
+  try {
+    const res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        max_tokens: 1200,
+        messages: [{ role: 'user', content: `És um professor de Matemática da 12ª classe angolana. Ensinas de forma clara, usando exemplos passo a passo. Os tópicos do programa são: PEMDAS, potenciação, funções e equações exponenciais, logaritmos e suas propriedades, mudança de base, função logarítmica, equações e inequações logarítmicas, derivadas, regras de derivação, derivadas de funções transcendentes, números complexos, estatística. Usa notação matemática clara. Sê conciso mas completo. Escreve SEMPRE fórmulas em LaTeX com \\( \\) para inline e \\[ \\] para display.
+
+IMPORTANTE: Se a pergunta envolver uma função que pode ser visualizada graficamente (ex: funções exponenciais, logarítmicas, derivadas, polinomiais), inclui NO FINAL da tua resposta um bloco JSON com este formato exacto:
+[GRAPH]{"expressions":[{"latex":"expressao_desmos","color":"#818CF8"},{"latex":"expressao2","color":"#F59E0B"}],"description":"Explicação breve do que o gráfico mostra"}[/GRAPH]
+
+Usa sintaxe Desmos para LaTeX (ex: e^x, \\ln(x), x^2, \\sqrt{x}). Só inclui o bloco GRAPH se fizer sentido visualizar a função.
+
+Pergunta do estudante: ${msg}` }]
+      })
+    });
+    const data = await res.json();
+    let reply = data.content.map(i=>i.text||'').join('');
+
+    // Extrai e remove o bloco de gráfico da resposta de texto
+    const graphData = parseGraphFromResponse(reply);
+    const cleanReply = reply.replace(/\[GRAPH\][\s\S]*?\[\/GRAPH\]/g, '').trim();
+
+    updateMsg(loadId, cleanReply);
+    MathJax.typesetPromise([document.getElementById(loadId)]).catch(()=>{});
+
+    // Renderiza gráfico se existir
+    if (graphData && graphData.expressions) {
+      renderGraph(graphData.expressions, graphData.description || '');
+    }
+  } catch(e) {
+    updateMsg(loadId, 'Erro ao conectar com a IA. Verifica a ligação e tenta novamente.');
+  }
+  btn.disabled = false;
+}
+
+let msgCount = 0;
+function addMsg(role, content) {
+  const id = 'msg-' + (++msgCount);
+  const time = new Date().toLocaleTimeString('pt',{hour:'2-digit',minute:'2-digit'});
+  const el = document.createElement('div');
+  el.className = `msg ${role}`; el.id = id;
+  el.innerHTML = `<div class="msg-bubble">${content}</div><span class="msg-time">${role==='user'?'Tu':time+' · Professor IA'}</span>`;
+  document.getElementById('chat-messages').appendChild(el);
+  el.scrollIntoView({behavior:'smooth'});
+  return id;
+}
+function updateMsg(id, content) {
+  const el = document.getElementById(id);
+  if (el) el.querySelector('.msg-bubble').innerHTML = content;
+}
+function handleChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+
+// ─── TOPIC LOADING ────────────────────────────────────────
+function loadTopic(key) {
+  currentTopic = key;
+  const t = TOPICS[key]; if (!t) return;
+  document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  studiedTopics.add(key);
+  localStorage.setItem('studied', JSON.stringify([...studiedTopics]));
+  updateProgress();
+  if (currentMode === 'learn') renderLearn(key);
+  else if (currentMode === 'practice') {
+    document.getElementById('practice-topic-name').textContent = t.title;
+    document.getElementById('practice-content').innerHTML = `<div class="welcome-card" style="margin:0;"><h1 style="font-size:20px">📚 ${t.title}</h1><p>Clica em <strong>Gerar Exercícios</strong> para receber 3 exercícios sobre este tópico com correção automática.</p></div>`;
+  }
+}
+
+// Gráficos por tópico
+const TOPIC_GRAPHS = {
+  func_exponencial: { expressions: [{latex:'e^x',color:'#818CF8'},{latex:'2^x',color:'#F59E0B'},{latex:'0.5^x',color:'#10B981'}], description:'Comparação: eˣ (roxo), 2ˣ (dourado) e (0.5)ˣ (verde). Nota como bases >1 crescem e bases <1 decrescem.' },
+  eq_exponencial:   { expressions: [{latex:'2^x',color:'#818CF8'},{latex:'y=8',color:'#F43F5E'}], description:'Gráfico de 2ˣ e a linha y=8. A solução de 2ˣ=8 é o ponto de intersecção (x=3).' },
+  logaritmos:       { expressions: [{latex:'\\ln(x)',color:'#818CF8'},{latex:'\\log_{10}(x)',color:'#F59E0B'}], description:'Logaritmo natural ln(x) e logaritmo de base 10 log(x). Ambos passam por (1,0).' },
+  func_logaritmica: { expressions: [{latex:'\\log_{2}(x)',color:'#818CF8'},{latex:'\\log_{10}(x)',color:'#F59E0B'},{latex:'\\ln(x)',color:'#10B981'}], description:'Funções logarítmicas com diferentes bases. Todas passam por (1,0) e são indefinidas para x≤0.' },
+  eq_logaritmica:   { expressions: [{latex:'\\log_{2}(x)',color:'#818CF8'},{latex:'y=3',color:'#F43F5E'}], description:'Solução de log₂(x)=3 é o ponto onde o gráfico intersecta a linha y=3 (x=8).' },
+  derivadas:        { expressions: [{latex:'x^2',color:'#818CF8'},{latex:'2x',color:'#F59E0B'}], description:'Função f(x)=x² (roxo) e a sua derivada f\'(x)=2x (dourado). A derivada representa o declive em cada ponto.' },
+  regras_derivacao: { expressions: [{latex:'x^3',color:'#818CF8'},{latex:'3x^2',color:'#F59E0B'},{latex:'6x',color:'#10B981'}], description:'f(x)=x³, f\'(x)=3x², f\'\'(x)=6x — primeira e segunda derivadas.' },
+  derivadas_transcendentes: { expressions: [{latex:'\\sin(x)',color:'#818CF8'},{latex:'\\cos(x)',color:'#F59E0B'}], description:'sin(x) e a sua derivada cos(x). Nota que cos(x) é zero onde sin(x) tem máximo ou mínimo.' },
+};
+
+function renderLearn(key) {
+  const t = TOPICS[key];
+  const panel = document.getElementById('learn-panel');
+  const graphData = TOPIC_GRAPHS[key];
+  const graphHTML = graphData ? `
+    <div class="section-heading">📈 Gráfico</div>
+    <div class="graph-container">
+      <div class="graph-label">📈 Gráfico Interactivo</div>
+      <div id="learn-graph" style="width:100%;height:300px;"></div>
+      <div class="graph-desc">${graphData.description}</div>
+    </div>` : '';
+
+  panel.innerHTML = `<div class="content-card">
+    <div class="topic-title">${t.title}</div>
+    <div class="topic-subtitle">📚 ${['1º Trimestre','2º Trimestre','3º Trimestre'][t.trimester-1]}</div>
+    <div class="section-heading">Teoria</div>
+    ${t.content}
+    ${graphHTML}
+    <div style="margin-top:28px;display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="act-btn active" onclick="setMode('practice')">✏️ Praticar este tópico →</button>
+      <button class="act-btn" onclick="setMode('chat')">🤖 Perguntar ao professor IA</button>
+    </div>
+  </div>`;
+  MathJax.typesetPromise([panel]).catch(()=>{});
+
+  // Renderiza gráfico Desmos se existir
+  if (graphData) {
+    setTimeout(() => {
+      const el = document.getElementById('learn-graph');
+      if (!el) return;
+      const calc = Desmos.GraphingCalculator(el, {
+        expressions: false, settingsMenu: false, zoomButtons: true,
+        border: false, backgroundColor: '#111F36',
+      });
+      graphData.expressions.forEach((expr, i) => {
+        calc.setExpression({ id: 'l'+i, latex: expr.latex, color: expr.color });
+      });
+    }, 100);
+  }
+}
+
+function updateProgress() {
+  const pct = (studiedTopics.size / Object.keys(TOPICS).length) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.querySelectorAll('.topic-btn').forEach(btn => {
+    const key = btn.getAttribute('onclick')?.match(/'(\w+)'/)?.[1];
+    if (key && studiedTopics.has(key)) btn.classList.add('done');
+  });
+}
+
+// ─── MODE SWITCHING ───────────────────────────────────────
+function setMode(mode) {
+  currentMode = mode;
+  ['learn','practice','exam','chat'].forEach(m => {
+    const panel = document.getElementById(m === 'chat' ? 'chat-panel' : m+'-panel');
+    const btn = document.getElementById('btn-'+m);
+    if (panel) panel.classList.toggle('active', m === mode);
+    if (btn) btn.classList.toggle('active', m === mode);
+  });
+  if (mode === 'practice' && currentTopic) {
+    document.getElementById('practice-topic-name').textContent = TOPICS[currentTopic]?.title || 'Seleciona um tópico';
+  }
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+updateProgress();
+</script>
+</body>
+</html>
